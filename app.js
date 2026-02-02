@@ -164,8 +164,7 @@ function calculateRating(avgRating) {
 
 // Показать детали объявления
 function showListingDetails(listing) {
-    const typeLabel = listing.listing_type === 'sell' ? 'Продаю' : 'Скупаю';
-    alert(`${listing.game}\n\nТип: ${typeLabel}\nКоличество: ${listing.amount}кк\nЦена: ${listing.price}₽\n\nПродавец: ${listing.seller.name}`);
+    alert(`${listing.game}\n\nКоличество: ${listing.amount}кк\nЦена: ${listing.price}₽\n\nПродавец: ${listing.seller.name}`);
 }
 
 // Загрузка данных пользователя
@@ -260,6 +259,10 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         const rating = calculateRating(userData.rating || 0);
         document.getElementById('user-rating').textContent = rating;
         
+        // Обновляем баланс
+        const balance = userData.balance || 0;
+        document.getElementById('user-balance').textContent = balance + ' ₽';
+        
         window.currentUserId = telegramId;
         window.currentUserData = userData;
         
@@ -286,6 +289,10 @@ function openProfile() {
         document.getElementById('profile-name-input').value = window.currentUserData.name;
         document.getElementById('profile-telegram-id').textContent = window.currentUserData.telegram_id || '—';
         document.getElementById('profile-rating-display').textContent = calculateRating(window.currentUserData.rating || 0);
+        
+        // Обновляем баланс
+        const balance = window.currentUserData.balance || 0;
+        document.getElementById('user-balance').textContent = balance + ' ₽';
         
         const avatarEl = document.getElementById('profile-avatar-large');
         if (window.currentUserData.avatar_url) {
@@ -338,7 +345,6 @@ function closeCreateListing() {
 
 // Опубликовать объявление
 async function publishListing() {
-    const listingType = document.getElementById('listing-type').value;
     const server = document.getElementById('listing-server').value;
     const amount = document.getElementById('listing-amount').value;
     const price = document.getElementById('listing-price').value;
@@ -377,12 +383,13 @@ async function publishListing() {
     }
     
     try {
-        // Создаем объявление
+        debugLog('Publishing listing: server=' + server + ', amount=' + amount + ', price=' + price, 'info');
+        
+        // Создаем объявление (без listing_type)
         const { error } = await supabaseClient
             .from('rplavka_listings')
             .insert([{
                 seller_id: userId,
-                listing_type: listingType,
                 game: server,
                 amount: parseInt(amount),
                 price: parseInt(price),
@@ -391,6 +398,8 @@ async function publishListing() {
             }]);
         
         if (error) throw error;
+        
+        debugLog('Listing published successfully', 'info');
         
         if (tg) {
             tg.showAlert('Объявление успешно опубликовано!');
@@ -403,6 +412,7 @@ async function publishListing() {
         loadListings(); // Перезагружаем список
     } catch (error) {
         console.error('Error publishing listing:', error);
+        debugLog('Error publishing: ' + error.message, 'error');
         if (tg) {
             tg.showAlert('Ошибка при публикации: ' + error.message);
         } else {
@@ -476,11 +486,8 @@ function renderMyListings(listings) {
         const card = document.createElement('div');
         card.className = 'my-listing-card';
         
-        const typeLabel = listing.listing_type === 'sell' ? 'Продаю' : 'Скупаю';
-        
         card.innerHTML = `
             <div class="my-listing-info">
-                <div class="my-listing-type">${typeLabel}</div>
                 <div class="my-listing-server">${listing.game}</div>
                 <div class="my-listing-details">${listing.amount}кк - ${listing.price}₽</div>
             </div>
@@ -557,6 +564,17 @@ async function deleteListing(listingId) {
     }
 }
 
+// Открыть пополнение баланса
+function openTopup() {
+    if (tg) {
+        tg.showAlert('Функция пополнения баланса будет доступна в следующей версии');
+        tg.HapticFeedback.notificationOccurred('warning');
+    } else {
+        alert('Функция пополнения баланса будет доступна в следующей версии');
+    }
+    debugLog('Topup button clicked (not implemented yet)', 'info');
+}
+
 // Делаем функции глобальными
 window.openProfile = openProfile;
 window.closeProfile = closeProfile;
@@ -569,3 +587,4 @@ window.deleteListing = deleteListing;
 window.toggleDebugConsole = toggleDebugConsole;
 window.clearDebugConsole = clearDebugConsole;
 window.copyDebugLogs = copyDebugLogs;
+window.openTopup = openTopup;

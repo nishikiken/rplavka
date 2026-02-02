@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=25">
+    <link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
     <div class="container">
@@ -27,7 +27,7 @@
                 <div class="profile-info-section">
                     <div class="profile-field">
                         <label>Тип объявления</label>
-                        <select id="listing-type">
+                        <select id="listing-type" style="display: none;">
                             <option value="sell">Продаю валюту</option>
                             <option value="buy">Скупаю валюту</option>
                         </select>
@@ -107,6 +107,13 @@
                     </div>
                     
                     <div class="profile-info-section">
+                        <!-- Баланс -->
+                        <div class="profile-balance-card">
+                            <div class="balance-label">Баланс</div>
+                            <div class="balance-amount" id="user-balance">0 ₽</div>
+                            <button class="topup-btn" onclick="openTopup()">💳 Пополнить</button>
+                        </div>
+                        
                         <div class="profile-field">
                             <label>Имя пользователя</label>
                             <input type="text" id="profile-name-input" placeholder="Ваше имя" disabled>
@@ -495,7 +502,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v25</div>
+                    <div class="user-version">v26</div>
                 </div>
             </div>
         </div>
@@ -516,6 +523,6 @@
     
     <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
-    <script src="app.js?v=25"></script>
+    <script src="app.js?v=26"></script>
 </body>
 </html>
