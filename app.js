@@ -171,7 +171,168 @@ function loadUserData() {
     }
 }
 
-// Загрузка данных с Supabase
+// Загрузка данных с Supabase (обновлено ниже)
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', () => {
+    loadUserData();
+    loadListings();
+});
+
+// Делаем функцию глобальной
+window.switchMode = switchMode;
+
+// Открытие личного кабинета
+function openProfile() {
+    const modal = document.getElementById('profile-modal');
+    modal.classList.add('active');
+    
+    // Загружаем текущий никнейм
+    if (window.currentUserData && window.currentUserData.nickname) {
+        document.getElementById('nickname-input').value = window.currentUserData.nickname;
+    }
+    
+    if (tg) tg.HapticFeedback.impactOccurred('medium');
+}
+
+// Закрытие личного кабинета
+function closeProfile() {
+    const modal = document.getElementById('profile-modal');
+    modal.classList.remove('active');
+    
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Сохранение никнейма
+async function saveNickname() {
+    const input = document.getElementById('nickname-input');
+    const nickname = input.value.trim();
+    
+    // Валидация: только латиница, цифры, подчеркивание
+    const latinOnly = /^[a-zA-Z0-9_]+$/;
+    
+    if (!nickname) {
+        alert('Введите никнейм');
+        return;
+    }
+    
+    if (!latinOnly.test(nickname)) {
+        alert('Используйте только латинские буквы, цифры и подчеркивание');
+        return;
+    }
+    
+    if (nickname.length > 14) {
+        alert('Максимум 14 символов');
+        return;
+    }
+    
+    if (!supabaseClient || !window.currentUserId) {
+        alert('Ошибка: нет подключения');
+        return;
+    }
+    
+    try {
+        const { error } = await supabaseClient
+            .from('rplavka_users')
+            .update({ nickname: nickname })
+            .eq('telegram_id', window.currentUserId);
+        
+        if (error) throw error;
+        
+        if (window.currentUserData) {
+            window.currentUserData.nickname = nickname;
+        }
+        
+        alert('Никнейм сохранен!');
+        closeProfile();
+        
+        if (tg) tg.HapticFeedback.notificationOccurred('success');
+    } catch (error) {
+        console.error('Error saving nickname:', error);
+        alert('Ошибка сохранения');
+    }
+}
+
+// Открытие формы создания объявления
+function openCreateListing() {
+    closeProfile();
+    
+    const modal = document.getElementById('listing-modal');
+    modal.classList.add('active');
+    
+    if (tg) tg.HapticFeedback.impactOccurred('medium');
+}
+
+// Закрытие формы создания объявления
+function closeCreateListing() {
+    const modal = document.getElementById('listing-modal');
+    modal.classList.remove('active');
+    
+    // Очищаем форму
+    document.getElementById('server-select').value = '';
+    document.getElementById('price-input').value = '';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Публикация объявления
+async function publishListing() {
+    const server = document.getElementById('server-select').value;
+    const price = document.getElementById('price-input').value;
+    
+    if (!server) {
+        alert('Выберите сервер');
+        return;
+    }
+    
+    if (!price || price <= 0) {
+        alert('Укажите корректную цену');
+        return;
+    }
+    
+    if (!supabaseClient || !window.currentUserId) {
+        alert('Ошибка: нет подключения');
+        return;
+    }
+    
+    try {
+        // Получаем данные пользователя
+        const { data: userData, error: userError } = await supabaseClient
+            .from('rplavka_users')
+            .select('id, nickname')
+            .eq('telegram_id', window.currentUserId)
+            .single();
+        
+        if (userError) throw userError;
+        
+        const displayName = userData.nickname || 'rp_dealer';
+        
+        // Создаем объявление
+        const { error: listingError } = await supabaseClient
+            .from('rplavka_listings')
+            .insert([{
+                seller_id: userData.id,
+                game: server,
+                price: parseFloat(price),
+                amount: '1кк',
+                description: `от ${displayName}`,
+                status: 'active'
+            }]);
+        
+        if (listingError) throw listingError;
+        
+        alert('Объявление опубликовано!');
+        closeCreateListing();
+        loadListings(); // Перезагружаем список
+        
+        if (tg) tg.HapticFeedback.notificationOccurred('success');
+    } catch (error) {
+        console.error('Error publishing listing:', error);
+        alert('Ошибка публикации');
+    }
+}
+
+// Обновляем функцию загрузки данных пользователя
 async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
     if (!supabaseClient) return;
     
@@ -198,7 +359,8 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
                     telegram_id: telegramId,
                     name: name,
                     avatar_url: avatarUrl,
-                    rating: 0
+                    rating: 0,
+                    nickname: null
                 }])
                 .select()
                 .single();
@@ -208,7 +370,6 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         } else {
             console.log('User found, updating...');
             const { data: updatedUser, error: updateError } = await supabaseClient
-                .from('rplavka_users')
                 .update({
                     name: name,
                     avatar_url: avatarUrl
@@ -228,17 +389,17 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         document.getElementById('user-rating').textContent = rating;
         
         window.currentUserId = telegramId;
+        window.currentUserData = userData;
         
     } catch (error) {
         console.error('Error loading user data:', error);
     }
 }
 
-// Инициализация
-document.addEventListener('DOMContentLoaded', () => {
-    loadUserData();
-    loadListings();
-});
-
-// Делаем функцию глобальной
-window.switchMode = switchMode;
+// Делаем функции глобальными
+window.openProfile = openProfile;
+window.closeProfile = closeProfile;
+window.saveNickname = saveNickname;
+window.openCreateListing = openCreateListing;
+window.closeCreateListing = closeCreateListing;
+window.publishListing = publishListing;
