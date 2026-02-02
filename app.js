@@ -38,10 +38,12 @@ function switchMode(mode) {
         welcomeScreen.style.display = 'none';
     }
     
-    // Показываем заголовок и контейнер с объявлениями
+    // Показываем заголовок, кнопку создания и контейнер с объявлениями
     const sectionTitle = document.getElementById('section-title');
+    const createBtn = document.getElementById('create-listing-btn');
     const listingsContainer = document.getElementById('listings-container');
     if (sectionTitle) sectionTitle.style.display = 'block';
+    if (createBtn) createBtn.style.display = 'block';
     if (listingsContainer) listingsContainer.style.display = 'flex';
     
     // Обновляем активную кнопку
@@ -151,6 +153,9 @@ function loadUserData() {
     if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const user = tg.initDataUnsafe.user;
         console.log('User:', user.first_name);
+        
+        // Сохраняем userId сразу
+        window.currentUserId = user.id;
         
         const userName = user.first_name || user.username || 'Пользователь';
         document.getElementById('user-name').textContent = userName;
@@ -274,12 +279,13 @@ function closeProfile() {
     if (tg) tg.HapticFeedback.impactOccurred('light');
 }
 
-// Изменить аватар
-function changeAvatar() {
+// Создать объявление
+function createListing() {
     if (tg) {
-        tg.showAlert('Изменение аватара доступно только через настройки Telegram');
+        tg.showAlert('Функция создания объявлений будет доступна в следующей версии');
+        tg.HapticFeedback.notificationOccurred('warning');
     } else {
-        alert('Изменение аватара доступно только через настройки Telegram');
+        alert('Функция создания объявлений будет доступна в следующей версии');
     }
 }
 
@@ -337,5 +343,5 @@ async function saveProfile() {
 // Делаем функции глобальными
 window.openProfile = openProfile;
 window.closeProfile = closeProfile;
-window.changeAvatar = changeAvatar;
+window.createListing = createListing;
 window.saveProfile = saveProfile;

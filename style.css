@@ -121,8 +121,29 @@ body {
     font-weight: 700;
     color: #888;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     letter-spacing: 1px;
+}
+
+.create-listing-btn {
+    background: var(--neon-green);
+    border: none;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px var(--neon-green-glow);
+    margin: 0 auto 16px;
+    display: block;
+    width: fit-content;
+}
+
+.create-listing-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 30px var(--neon-green-glow);
 }
 
 .listings-container {
