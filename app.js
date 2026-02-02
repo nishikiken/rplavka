@@ -252,6 +252,10 @@ function closeProfile() {
 
 // Создать объявление
 function createListing() {
+    // Закрываем профиль если он открыт
+    document.getElementById('profile-page').style.display = 'none';
+    
+    // Открываем форму создания
     document.getElementById('create-listing-page').style.display = 'block';
     document.getElementById('publications-section').style.display = 'none';
     document.getElementById('user-profile-card').style.display = 'none';
@@ -436,20 +440,31 @@ async function deleteListing(listingId) {
         return;
     }
     
-    const confirmed = confirm('Удалить это объявление?');
+    // Используем confirm из Telegram или браузера
+    let confirmed;
+    if (tg && tg.showConfirm) {
+        confirmed = await new Promise(resolve => {
+            tg.showConfirm('Удалить это объявление?', resolve);
+        });
+    } else {
+        confirmed = confirm('Удалить это объявление?');
+    }
+    
     if (!confirmed) return;
     
     try {
-        console.log('Deleting listing:', listingId);
+        console.log('Deleting listing ID:', listingId);
         
+        // Используем delete вместо update для полного удаления
         const { data, error } = await supabaseClient
             .from('rplavka_listings')
-            .update({ status: 'deleted' })
+            .delete()
             .eq('id', listingId)
+            .eq('seller_id', window.currentUserId) // Проверяем что это объявление пользователя
             .select();
         
         if (error) {
-            console.error('Delete error:', error);
+            console.error('Delete error details:', error);
             throw error;
         }
         
@@ -467,7 +482,7 @@ async function deleteListing(listingId) {
         loadListings(); // Обновляем главную страницу
     } catch (error) {
         console.error('Error deleting listing:', error);
-        const errorMsg = 'Ошибка при удалении: ' + (error.message || 'неизвестная ошибка');
+        const errorMsg = 'Ошибка при удалении: ' + (error.message || error.hint || 'неизвестная ошибка');
         if (tg) {
             tg.showAlert(errorMsg);
         } else {
