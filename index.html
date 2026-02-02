@@ -90,48 +90,58 @@
                 <h2 class="profile-title">МОЙ ПРОФИЛЬ</h2>
             </div>
             
-            <div class="profile-content">
-                <div class="profile-avatar-section">
-                    <div class="profile-avatar-large" id="profile-avatar-large">
-                        <div class="avatar-placeholder">👤</div>
+            <!-- Вкладки профиля -->
+            <div class="profile-tabs">
+                <button class="profile-tab active" onclick="switchProfileTab('info')">Профиль</button>
+                <button class="profile-tab" onclick="switchProfileTab('listings')">Мои объявления</button>
+            </div>
+            
+            <!-- Вкладка "Профиль" -->
+            <div class="profile-tab-content" id="profile-tab-info">
+                <div class="profile-content">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-large" id="profile-avatar-large">
+                            <div class="avatar-placeholder">👤</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-info-section">
+                        <div class="profile-field">
+                            <label>Имя пользователя (закреплено навсегда)</label>
+                            <input type="text" id="profile-name-input" placeholder="Ваше имя" disabled>
+                        </div>
+                        
+                        <div class="profile-field">
+                            <label>Рейтинг</label>
+                            <div class="profile-rating-display" id="profile-rating-display">⭐⭐⭐⭐⭐</div>
+                        </div>
+                        
+                        <div class="profile-field">
+                            <label>Telegram ID</label>
+                            <div class="profile-telegram-id" id="profile-telegram-id">—</div>
+                        </div>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-value" id="stat-deals">0</div>
+                                <div class="stat-label">Сделок</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value" id="stat-reviews">0</div>
+                                <div class="stat-label">Отзывов</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="profile-info-section">
-                    <div class="profile-field">
-                        <label>Имя пользователя</label>
-                        <input type="text" id="profile-name-input" placeholder="Ваше имя">
-                    </div>
+            </div>
+            
+            <!-- Вкладка "Мои объявления" -->
+            <div class="profile-tab-content" id="profile-tab-listings" style="display: none;">
+                <div class="profile-content">
+                    <button class="create-listing-btn-profile" onclick="createListing()">+ Создать объявление</button>
                     
-                    <div class="profile-field">
-                        <label>Рейтинг</label>
-                        <div class="profile-rating-display" id="profile-rating-display">⭐⭐⭐⭐⭐</div>
-                    </div>
-                    
-                    <div class="profile-field">
-                        <label>Telegram ID</label>
-                        <div class="profile-telegram-id" id="profile-telegram-id">—</div>
-                    </div>
-                    
-                    <div class="profile-stats">
-                        <div class="stat-item">
-                            <div class="stat-value" id="stat-deals">0</div>
-                            <div class="stat-label">Сделок</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="stat-reviews">0</div>
-                            <div class="stat-label">Отзывов</div>
-                        </div>
-                    </div>
-                    
-                    <button class="save-profile-btn" onclick="saveProfile()">Сохранить изменения</button>
-                    
-                    <!-- Мои объявления -->
-                    <div class="my-listings-section">
-                        <h3 class="my-listings-title">МОИ ОБЪЯВЛЕНИЯ</h3>
-                        <div class="my-listings-container" id="my-listings-container">
-                            <div class="empty-state">Загрузка...</div>
-                        </div>
+                    <div class="my-listings-container" id="my-listings-container">
+                        <div class="empty-state">Загрузка...</div>
                     </div>
                 </div>
             </div>
@@ -139,26 +149,10 @@
 
         <!-- Публикации -->
         <div class="publications-section" id="publications-section">
-            <!-- Приветственный экран (показывается по умолчанию) -->
-            <div class="welcome-screen" id="welcome-screen">
-                <div class="welcome-content">
-                    <p class="welcome-text">Выберите раздел на панели снизу:</p>
-                    <div class="welcome-buttons">
-                        <div class="welcome-hint">💰 <strong>BUY</strong> - купить виртуальную валюту</div>
-                        <div class="welcome-hint">💸 <strong>SELL</strong> - продать виртуальную валюту</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Заголовок раздела -->
+            <h2 class="section-title" id="section-title">ВСЕ ОБЪЯВЛЕНИЯ</h2>
             
-            <!-- Заголовок раздела (скрыт по умолчанию) -->
-            <h2 class="section-title" id="section-title" style="display: none;">ПУБЛИКАЦИИ О ПРОДАЖЕ</h2>
-            
-            <!-- Кнопка создания объявления -->
-            <button class="create-listing-btn" id="create-listing-btn" style="display: none;" onclick="createListing()">
-                ➕ Создать объявление
-            </button>
-            
-            <div class="listings-container" id="listings-container" style="display: none;">
+            <div class="listings-container" id="listings-container">
                 <!-- Демо карточки с реальными серверами -->
                 <div class="seller-card">
                     <div class="seller-info">
@@ -484,22 +478,10 @@
             </div>
         </div>
 
-        <!-- Плашка пользователя с кнопками BUY/SELL -->
-        <div class="user-profile-card" id="user-profile-card">
+        <!-- Плашка пользователя -->
+        <div class="user-profile-card" id="user-profile-card" onclick="openProfile()">
             <div class="particles-bg"></div>
             <div class="user-info">
-                <!-- Кнопки BUY/SELL горизонтально -->
-                <div class="mode-buttons">
-                    <button class="mode-btn buy-btn" onclick="switchMode('buy')">
-                        <span class="btn-icon">💰</span>
-                        <span>BUY</span>
-                    </button>
-                    <div class="btn-separator">|</div>
-                    <button class="mode-btn sell-btn" onclick="switchMode('sell')">
-                        <span class="btn-icon">💸</span>
-                        <span>SELL</span>
-                    </button>
-                </div>
                 <!-- Информация о пользователе -->
                 <div class="user-details">
                     <div class="user-name" id="user-name">Загрузка...</div>
@@ -508,11 +490,11 @@
                     </div>
                 </div>
                 <!-- Аватар справа -->
-                <div class="user-avatar-wrapper" onclick="openProfile()">
+                <div class="user-avatar-wrapper">
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v17</div>
+                    <div class="user-version">v19</div>
                 </div>
             </div>
         </div>

@@ -25,45 +25,7 @@ if (tg) {
     document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#ffffff');
 }
 
-// Текущий режим (buy/sell)
-let currentMode = 'buy';
-
-// Переключение режима
-function switchMode(mode) {
-    currentMode = mode;
-    
-    // Скрываем приветственный экран
-    const welcomeScreen = document.getElementById('welcome-screen');
-    if (welcomeScreen) {
-        welcomeScreen.style.display = 'none';
-    }
-    
-    // Показываем заголовок, кнопку создания и контейнер с объявлениями
-    const sectionTitle = document.getElementById('section-title');
-    const createBtn = document.getElementById('create-listing-btn');
-    const listingsContainer = document.getElementById('listings-container');
-    if (sectionTitle) sectionTitle.style.display = 'block';
-    if (createBtn) createBtn.style.display = 'block';
-    if (listingsContainer) listingsContainer.style.display = 'flex';
-    
-    // Обновляем активную кнопку
-    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-    if (mode === 'buy') {
-        document.querySelector('.buy-btn').classList.add('active');
-        sectionTitle.textContent = 'ПУБЛИКАЦИИ О ПРОДАЖЕ';
-    } else {
-        document.querySelector('.sell-btn').classList.add('active');
-        sectionTitle.textContent = 'ПУБЛИКАЦИИ О СКУПКЕ';
-    }
-    
-    // Haptic feedback
-    if (tg) tg.HapticFeedback.impactOccurred('light');
-    
-    // Загружаем объявления
-    loadListings();
-}
-
-// Загрузка объявлений
+// Загрузка ВСЕХ объявлений (без фильтрации по типу)
 async function loadListings() {
     if (!supabaseClient) {
         console.log('Supabase not available, showing demo listings');
@@ -71,22 +33,16 @@ async function loadListings() {
     }
     
     try {
-        // Определяем какой тип объявлений загружать
-        // buy режим = показываем sell объявления (кто продает)
-        // sell режим = показываем buy объявления (кто скупает)
-        const listingType = currentMode === 'buy' ? 'sell' : 'buy';
-        
         const { data: listings, error } = await supabaseClient
             .from('rplavka_listings')
             .select('*, seller:rplavka_users!seller_id(*)')
             .eq('status', 'active')
-            .eq('listing_type', listingType)
             .order('created_at', { ascending: false })
-            .limit(20);
+            .limit(50);
         
         if (error) throw error;
         
-        console.log('Listings loaded:', listings);
+        console.log('All listings loaded:', listings);
         
         if (listings && listings.length > 0) {
             renderListings(listings);
@@ -186,7 +142,7 @@ function loadUserData() {
     }
 }
 
-// Загрузка данных с Supabase
+// Загрузка данных с Supabase (имя НИКОГДА не обновляется после первого сохранения)
 async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
     if (!supabaseClient) return;
     
@@ -206,7 +162,7 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         let userData;
         
         if (!existingUser) {
-            console.log('Creating new user...');
+            console.log('Creating new user with LOCKED name...');
             const { data: newUser, error: createError } = await supabaseClient
                 .from('rplavka_users')
                 .insert([{
@@ -221,8 +177,8 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
             if (createError) throw createError;
             userData = newUser;
         } else {
-            console.log('User found, updating avatar only...');
-            // Обновляем только аватар, НЕ имя (имя меняется только через профиль)
+            console.log('User found, updating avatar only (name is LOCKED)...');
+            // Обновляем ТОЛЬКО аватар, имя НИКОГДА не меняется
             const { data: updatedUser, error: updateError } = await supabaseClient
                 .from('rplavka_users')
                 .update({
@@ -234,12 +190,12 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
             
             if (updateError) throw updateError;
             userData = updatedUser;
-            
-            // Обновляем имя на плашке из БД
-            document.getElementById('user-name').textContent = userData.name;
         }
         
         console.log('User data loaded:', userData);
+        
+        // Обновляем имя на плашке из БД (закрепленное навсегда)
+        document.getElementById('user-name').textContent = userData.name;
         
         // Обновляем рейтинг (звёзды от 0 до 5)
         const rating = calculateRating(userData.rating || 0);
@@ -259,9 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadListings();
 });
 
-// Делаем функцию глобальной
-window.switchMode = switchMode;
-
 
 // Открыть профиль
 function openProfile() {
@@ -269,17 +222,20 @@ function openProfile() {
     document.getElementById('publications-section').style.display = 'none';
     document.getElementById('user-profile-card').style.display = 'none';
     
-    // Загружаем данные профиля
-    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        const user = tg.initDataUnsafe.user;
-        document.getElementById('profile-name-input').value = user.first_name || user.username || '';
-        document.getElementById('profile-telegram-id').textContent = user.id || '—';
+    // Загружаем данные профиля из БД (закрепленное имя)
+    if (window.currentUserData) {
+        document.getElementById('profile-name-input').value = window.currentUserData.name;
+        document.getElementById('profile-telegram-id').textContent = window.currentUserData.telegram_id || '—';
+        document.getElementById('profile-rating-display').textContent = calculateRating(window.currentUserData.rating || 0);
         
         const avatarEl = document.getElementById('profile-avatar-large');
-        if (user.photo_url) {
-            avatarEl.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+        if (window.currentUserData.avatar_url) {
+            avatarEl.innerHTML = `<img src="${window.currentUserData.avatar_url}" alt="Avatar">`;
         }
     }
+    
+    // Переключаемся на вкладку "Профиль"
+    switchProfileTab('info');
     
     if (tg) tg.HapticFeedback.impactOccurred('medium');
 }
@@ -392,61 +348,112 @@ async function publishListing() {
     }
 }
 
-// Сохранить профиль
-async function saveProfile() {
-    const newName = document.getElementById('profile-name-input').value.trim();
+// Переключение вкладок профиля
+function switchProfileTab(tab) {
+    // Обновляем активную вкладку
+    document.querySelectorAll('.profile-tab').forEach(btn => btn.classList.remove('active'));
     
-    if (!newName) {
-        if (tg) {
-            tg.showAlert('Введите имя пользователя');
-        } else {
-            alert('Введите имя пользователя');
-        }
-        return;
+    if (tab === 'info') {
+        document.querySelectorAll('.profile-tab')[0].classList.add('active');
+        document.getElementById('profile-tab-info').style.display = 'block';
+        document.getElementById('profile-tab-listings').style.display = 'none';
+    } else if (tab === 'listings') {
+        document.querySelectorAll('.profile-tab')[1].classList.add('active');
+        document.getElementById('profile-tab-info').style.display = 'none';
+        document.getElementById('profile-tab-listings').style.display = 'block';
+        
+        // Загружаем мои объявления
+        loadMyListings();
     }
     
-    // Получаем userId из Telegram
-    let userId = window.currentUserId;
-    if (!userId && tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        userId = tg.initDataUnsafe.user.id;
-        window.currentUserId = userId;
-    }
-    
-    if (!supabaseClient || !userId) {
-        if (tg) {
-            tg.showAlert('Ошибка: нет подключения к базе данных');
-        } else {
-            alert('Ошибка: нет подключения к базе данных');
-        }
-        console.error('Save profile error:', { supabaseClient: !!supabaseClient, userId });
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Загрузка моих объявлений
+async function loadMyListings() {
+    if (!supabaseClient || !window.currentUserId) {
+        document.getElementById('my-listings-container').innerHTML = '<div class="empty-state">Нет данных</div>';
         return;
     }
     
     try {
-        const { error } = await supabaseClient
-            .from('rplavka_users')
-            .update({ name: newName })
-            .eq('telegram_id', userId);
+        const { data: listings, error } = await supabaseClient
+            .from('rplavka_listings')
+            .select('*')
+            .eq('seller_id', window.currentUserId)
+            .eq('status', 'active')
+            .order('created_at', { ascending: false });
         
         if (error) throw error;
         
-        // Обновляем имя на плашке
-        document.getElementById('user-name').textContent = newName;
+        console.log('My listings loaded:', listings);
+        
+        if (listings && listings.length > 0) {
+            renderMyListings(listings);
+        } else {
+            document.getElementById('my-listings-container').innerHTML = '<div class="empty-state">У вас пока нет объявлений</div>';
+        }
+    } catch (error) {
+        console.error('Error loading my listings:', error);
+        document.getElementById('my-listings-container').innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+    }
+}
+
+// Отрисовка моих объявлений
+function renderMyListings(listings) {
+    const container = document.getElementById('my-listings-container');
+    container.innerHTML = '';
+    
+    listings.forEach(listing => {
+        const card = document.createElement('div');
+        card.className = 'my-listing-card';
+        
+        const typeLabel = listing.listing_type === 'sell' ? 'Продаю' : 'Скупаю';
+        
+        card.innerHTML = `
+            <div class="my-listing-info">
+                <div class="my-listing-type">${typeLabel}</div>
+                <div class="my-listing-server">${listing.game}</div>
+                <div class="my-listing-details">${listing.amount}кк - ${listing.price}₽</div>
+            </div>
+            <button class="delete-listing-btn" onclick="deleteListing(${listing.id})">🗑️</button>
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
+// Удалить объявление
+async function deleteListing(listingId) {
+    if (!supabaseClient) return;
+    
+    const confirmed = confirm('Удалить это объявление?');
+    if (!confirmed) return;
+    
+    try {
+        const { error } = await supabaseClient
+            .from('rplavka_listings')
+            .update({ status: 'deleted' })
+            .eq('id', listingId);
+        
+        if (error) throw error;
         
         if (tg) {
-            tg.showAlert('Профиль успешно обновлен!');
+            tg.showAlert('Объявление удалено');
             tg.HapticFeedback.notificationOccurred('success');
         } else {
-            alert('Профиль успешно обновлен!');
+            alert('Объявление удалено');
         }
         
-        closeProfile();
+        // Перезагружаем список
+        loadMyListings();
+        loadListings(); // Обновляем главную страницу
     } catch (error) {
-        console.error('Error saving profile:', error);
+        console.error('Error deleting listing:', error);
         if (tg) {
-            tg.showAlert('Ошибка при сохранении профиля: ' + error.message);
+            tg.showAlert('Ошибка при удалении');
         } else {
-            alert('Ошибка при сохранении профиля: ' + error.message);
+            alert('Ошибка при удалении');
         }
     }
 }
@@ -457,4 +464,6 @@ window.closeProfile = closeProfile;
 window.createListing = createListing;
 window.closeCreateListing = closeCreateListing;
 window.publishListing = publishListing;
-window.saveProfile = saveProfile;
+window.switchProfileTab = switchProfileTab;
+window.loadMyListings = loadMyListings;
+window.deleteListing = deleteListing;
