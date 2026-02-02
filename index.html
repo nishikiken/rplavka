@@ -16,6 +16,65 @@
             <h1 class="logo-title">RP LAVKA</h1>
         </div>
 
+        <!-- Форма создания объявления (скрыта по умолчанию) -->
+        <div class="create-listing-page" id="create-listing-page" style="display: none;">
+            <div class="profile-header">
+                <button class="back-btn" onclick="closeCreateListing()">← Назад</button>
+                <h2 class="profile-title">СОЗДАТЬ ОБЪЯВЛЕНИЕ</h2>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-info-section">
+                    <div class="profile-field">
+                        <label>Сервер</label>
+                        <select id="listing-server">
+                            <option value="">Выберите сервер</option>
+                            <option value="Downtown">Downtown</option>
+                            <option value="Strawberry">Strawberry</option>
+                            <option value="VineWood">VineWood</option>
+                            <option value="BlackBerry">BlackBerry</option>
+                            <option value="Insquad">Insquad</option>
+                            <option value="Sunrise">Sunrise</option>
+                            <option value="Rainbow">Rainbow</option>
+                            <option value="Richman">Richman</option>
+                            <option value="Eclipse">Eclipse</option>
+                            <option value="La Mesa">La Mesa</option>
+                            <option value="Burton">Burton</option>
+                            <option value="Rockford">Rockford</option>
+                            <option value="Alta">Alta</option>
+                            <option value="Del Perro">Del Perro</option>
+                            <option value="Davis">Davis</option>
+                            <option value="Harmony">Harmony</option>
+                            <option value="Redwood">Redwood</option>
+                            <option value="Hawick">Hawick</option>
+                            <option value="Grapeseed">Grapeseed</option>
+                            <option value="Murrieta">Murrieta</option>
+                            <option value="VesPucci">VesPucci</option>
+                            <option value="Milton">Milton</option>
+                            <option value="La Puerta">La Puerta</option>
+                        </select>
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label>Количество (млн)</label>
+                        <input type="number" id="listing-amount" placeholder="Например: 10" min="1">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label>Цена за 1кк (₽)</label>
+                        <input type="number" id="listing-price" placeholder="Например: 700" min="1">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label>Описание (необязательно)</label>
+                        <textarea id="listing-description" placeholder="Дополнительная информация..." rows="3"></textarea>
+                    </div>
+                    
+                    <button class="save-profile-btn" onclick="publishListing()">Опубликовать</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Страница профиля (скрыта по умолчанию) -->
         <div class="profile-page" id="profile-page" style="display: none;">
             <div class="profile-header">
@@ -437,7 +496,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v16</div>
+                    <div class="user-version">v17</div>
                 </div>
             </div>
         </div>

@@ -281,11 +281,98 @@ function closeProfile() {
 
 // Создать объявление
 function createListing() {
-    if (tg) {
-        tg.showAlert('Функция создания объявлений будет доступна в следующей версии');
-        tg.HapticFeedback.notificationOccurred('warning');
-    } else {
-        alert('Функция создания объявлений будет доступна в следующей версии');
+    document.getElementById('create-listing-page').style.display = 'block';
+    document.getElementById('publications-section').style.display = 'none';
+    document.getElementById('user-profile-card').style.display = 'none';
+    
+    // Очищаем форму
+    document.getElementById('listing-server').value = '';
+    document.getElementById('listing-amount').value = '';
+    document.getElementById('listing-price').value = '';
+    document.getElementById('listing-description').value = '';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('medium');
+}
+
+// Закрыть форму создания объявления
+function closeCreateListing() {
+    document.getElementById('create-listing-page').style.display = 'none';
+    document.getElementById('publications-section').style.display = 'block';
+    document.getElementById('user-profile-card').style.display = 'block';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Опубликовать объявление
+async function publishListing() {
+    const server = document.getElementById('listing-server').value;
+    const amount = document.getElementById('listing-amount').value;
+    const price = document.getElementById('listing-price').value;
+    const description = document.getElementById('listing-description').value.trim();
+    
+    // Валидация
+    if (!server) {
+        if (tg) tg.showAlert('Выберите сервер');
+        else alert('Выберите сервер');
+        return;
+    }
+    
+    if (!amount || amount <= 0) {
+        if (tg) tg.showAlert('Укажите количество');
+        else alert('Укажите количество');
+        return;
+    }
+    
+    if (!price || price <= 0) {
+        if (tg) tg.showAlert('Укажите цену');
+        else alert('Укажите цену');
+        return;
+    }
+    
+    // Получаем userId
+    let userId = window.currentUserId;
+    if (!userId && tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        userId = tg.initDataUnsafe.user.id;
+        window.currentUserId = userId;
+    }
+    
+    if (!supabaseClient || !userId) {
+        if (tg) tg.showAlert('Ошибка: нет подключения к базе данных');
+        else alert('Ошибка: нет подключения к базе данных');
+        return;
+    }
+    
+    try {
+        // Создаем объявление
+        const { error } = await supabaseClient
+            .from('rplavka_listings')
+            .insert([{
+                seller_id: userId,
+                game: server,
+                amount: parseInt(amount),
+                price: parseInt(price),
+                description: description || `${amount}кк - ${price}₽`,
+                status: 'active'
+            }]);
+        
+        if (error) throw error;
+        
+        if (tg) {
+            tg.showAlert('Объявление успешно опубликовано!');
+            tg.HapticFeedback.notificationOccurred('success');
+        } else {
+            alert('Объявление успешно опубликовано!');
+        }
+        
+        closeCreateListing();
+        loadListings(); // Перезагружаем список
+    } catch (error) {
+        console.error('Error publishing listing:', error);
+        if (tg) {
+            tg.showAlert('Ошибка при публикации: ' + error.message);
+        } else {
+            alert('Ошибка при публикации: ' + error.message);
+        }
     }
 }
 
@@ -302,12 +389,20 @@ async function saveProfile() {
         return;
     }
     
-    if (!supabaseClient || !window.currentUserId) {
+    // Получаем userId из Telegram
+    let userId = window.currentUserId;
+    if (!userId && tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        userId = tg.initDataUnsafe.user.id;
+        window.currentUserId = userId;
+    }
+    
+    if (!supabaseClient || !userId) {
         if (tg) {
             tg.showAlert('Ошибка: нет подключения к базе данных');
         } else {
             alert('Ошибка: нет подключения к базе данных');
         }
+        console.error('Save profile error:', { supabaseClient: !!supabaseClient, userId });
         return;
     }
     
@@ -315,7 +410,7 @@ async function saveProfile() {
         const { error } = await supabaseClient
             .from('rplavka_users')
             .update({ name: newName })
-            .eq('telegram_id', window.currentUserId);
+            .eq('telegram_id', userId);
         
         if (error) throw error;
         
@@ -333,9 +428,9 @@ async function saveProfile() {
     } catch (error) {
         console.error('Error saving profile:', error);
         if (tg) {
-            tg.showAlert('Ошибка при сохранении профиля');
+            tg.showAlert('Ошибка при сохранении профиля: ' + error.message);
         } else {
-            alert('Ошибка при сохранении профиля');
+            alert('Ошибка при сохранении профиля: ' + error.message);
         }
     }
 }
@@ -344,4 +439,6 @@ async function saveProfile() {
 window.openProfile = openProfile;
 window.closeProfile = closeProfile;
 window.createListing = createListing;
+window.closeCreateListing = closeCreateListing;
+window.publishListing = publishListing;
 window.saveProfile = saveProfile;
