@@ -33,7 +33,7 @@ function switchMode(mode) {
     currentMode = mode;
     
     // Обновляем активную кнопку
-    document.querySelectorAll('.mode-btn-top').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
     if (mode === 'buy') {
         document.querySelector('.buy-btn').classList.add('active');
         document.getElementById('section-title').textContent = 'ПУБЛИКАЦИИ О ПРОДАЖЕ';
@@ -211,7 +211,7 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         
         console.log('User data loaded:', userData);
         
-        // Обновляем рейтинг
+        // Обновляем рейтинг (звёзды от 0 до 5)
         const rating = calculateRating(userData.rating || 0);
         document.getElementById('user-rating').textContent = rating;
         
