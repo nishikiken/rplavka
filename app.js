@@ -71,10 +71,16 @@ async function loadListings() {
     }
     
     try {
+        // Определяем какой тип объявлений загружать
+        // buy режим = показываем sell объявления (кто продает)
+        // sell режим = показываем buy объявления (кто скупает)
+        const listingType = currentMode === 'buy' ? 'sell' : 'buy';
+        
         const { data: listings, error } = await supabaseClient
             .from('rplavka_listings')
             .select('*, seller:rplavka_users!seller_id(*)')
             .eq('status', 'active')
+            .eq('listing_type', listingType)
             .order('created_at', { ascending: false })
             .limit(20);
         
@@ -84,6 +90,10 @@ async function loadListings() {
         
         if (listings && listings.length > 0) {
             renderListings(listings);
+        } else {
+            // Показываем пустое состояние
+            const container = document.getElementById('listings-container');
+            container.innerHTML = '<div class="empty-state">Пока нет объявлений</div>';
         }
     } catch (error) {
         console.error('Error loading listings:', error);
@@ -113,7 +123,7 @@ function renderListings(listings) {
                 </div>
             </div>
             <div class="seller-banner">
-                <div class="banner-text">${listing.description || 'БАННЕР ПОЛЬЗОВАТЕЛЯ'}</div>
+                <div class="banner-text">${listing.amount}кк - ${listing.price}₽</div>
             </div>
         `;
         
@@ -211,11 +221,11 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
             if (createError) throw createError;
             userData = newUser;
         } else {
-            console.log('User found, updating...');
+            console.log('User found, updating avatar only...');
+            // Обновляем только аватар, НЕ имя (имя меняется только через профиль)
             const { data: updatedUser, error: updateError } = await supabaseClient
                 .from('rplavka_users')
                 .update({
-                    name: name,
                     avatar_url: avatarUrl
                 })
                 .eq('telegram_id', telegramId)
@@ -224,6 +234,9 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
             
             if (updateError) throw updateError;
             userData = updatedUser;
+            
+            // Обновляем имя на плашке из БД
+            document.getElementById('user-name').textContent = userData.name;
         }
         
         console.log('User data loaded:', userData);
@@ -233,6 +246,7 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         document.getElementById('user-rating').textContent = rating;
         
         window.currentUserId = telegramId;
+        window.currentUserData = userData;
         
     } catch (error) {
         console.error('Error loading user data:', error);
@@ -305,6 +319,7 @@ function closeCreateListing() {
 
 // Опубликовать объявление
 async function publishListing() {
+    const listingType = document.getElementById('listing-type').value;
     const server = document.getElementById('listing-server').value;
     const amount = document.getElementById('listing-amount').value;
     const price = document.getElementById('listing-price').value;
@@ -348,6 +363,7 @@ async function publishListing() {
             .from('rplavka_listings')
             .insert([{
                 seller_id: userId,
+                listing_type: listingType,
                 game: server,
                 amount: parseInt(amount),
                 price: parseInt(price),

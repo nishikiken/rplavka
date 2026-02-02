@@ -26,6 +26,14 @@
             <div class="profile-content">
                 <div class="profile-info-section">
                     <div class="profile-field">
+                        <label>Тип объявления</label>
+                        <select id="listing-type">
+                            <option value="sell">Продаю валюту</option>
+                            <option value="buy">Скупаю валюту</option>
+                        </select>
+                    </div>
+                    
+                    <div class="profile-field">
                         <label>Сервер</label>
                         <select id="listing-server">
                             <option value="">Выберите сервер</option>
@@ -117,6 +125,14 @@
                     </div>
                     
                     <button class="save-profile-btn" onclick="saveProfile()">Сохранить изменения</button>
+                    
+                    <!-- Мои объявления -->
+                    <div class="my-listings-section">
+                        <h3 class="my-listings-title">МОИ ОБЪЯВЛЕНИЯ</h3>
+                        <div class="my-listings-container" id="my-listings-container">
+                            <div class="empty-state">Загрузка...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
