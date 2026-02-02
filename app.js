@@ -573,10 +573,34 @@ function openTopup() {
     
     // Очищаем форму
     document.getElementById('topup-amount').value = '';
-    document.getElementById('topup-method').value = '';
+    window.selectedPaymentMethod = null;
+    
+    // Убираем выделение со всех кнопок
+    document.querySelectorAll('.payment-method-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
     
     if (tg) tg.HapticFeedback.impactOccurred('medium');
     debugLog('Topup page opened', 'info');
+}
+
+// Выбрать способ оплаты
+function selectPaymentMethod(method) {
+    window.selectedPaymentMethod = method;
+    
+    // Убираем выделение со всех кнопок
+    document.querySelectorAll('.payment-method-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Выделяем выбранную кнопку
+    const selectedBtn = document.querySelector(`[data-method="${method}"]`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
+    
+    if (tg) tg.HapticFeedback.selectionChanged();
+    debugLog('Payment method selected: ' + method, 'info');
 }
 
 // Закрыть пополнение
@@ -591,7 +615,7 @@ function closeTopup() {
 // Обработать пополнение
 function processTopup() {
     const amount = document.getElementById('topup-amount').value;
-    const method = document.getElementById('topup-method').value;
+    const method = window.selectedPaymentMethod;
     
     if (!amount || amount < 100) {
         if (tg) tg.showAlert('Минимальная сумма пополнения: 100₽');
@@ -630,3 +654,4 @@ window.copyDebugLogs = copyDebugLogs;
 window.openTopup = openTopup;
 window.closeTopup = closeTopup;
 window.processTopup = processTopup;
+window.selectPaymentMethod = selectPaymentMethod;

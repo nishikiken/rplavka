@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=27">
+    <link rel="stylesheet" href="style.css?v=28">
 </head>
 <body>
     <div class="container">
@@ -99,13 +99,20 @@
                     
                     <div class="profile-field">
                         <label>Способ оплаты</label>
-                        <select id="topup-method">
-                            <option value="">Выберите способ</option>
-                            <option value="card">💳 Банковская карта</option>
-                            <option value="sbp">📱 СБП (Система быстрых платежей)</option>
-                            <option value="yoomoney">💰 ЮMoney</option>
-                            <option value="qiwi">🥝 QIWI</option>
-                        </select>
+                        <div class="payment-methods">
+                            <button class="payment-method-btn" data-method="card" onclick="selectPaymentMethod('card')">
+                                <span class="payment-icon">💳</span>
+                                <span class="payment-name">Банковская карта</span>
+                            </button>
+                            <button class="payment-method-btn" data-method="sbp" onclick="selectPaymentMethod('sbp')">
+                                <span class="payment-icon">📱</span>
+                                <span class="payment-name">СБП</span>
+                            </button>
+                            <button class="payment-method-btn" data-method="yoomoney" onclick="selectPaymentMethod('yoomoney')">
+                                <span class="payment-icon">💰</span>
+                                <span class="payment-name">ЮMoney</span>
+                            </button>
+                        </div>
                     </div>
                     
                     <button class="save-profile-btn" onclick="processTopup()">Продолжить</button>
@@ -539,7 +546,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v27</div>
+                    <div class="user-version">v28</div>
                 </div>
             </div>
         </div>
@@ -560,6 +567,6 @@
     
     <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
-    <script src="app.js?v=27"></script>
+    <script src="app.js?v=28"></script>
 </body>
 </html>
