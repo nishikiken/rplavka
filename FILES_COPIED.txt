@@ -1,0 +1,25 @@
+✅ Файлы скопированы в C:\Users\Nishiki\Documents\GitHub\rplavka\
+
+Готовы к коммиту:
+- index.html (Mini App главная страница)
+- style.css (зелёная неоновая тема)
+- app.js (JavaScript с Supabase)
+- .gitignore (Git ignore файл)
+- README.md (документация)
+- START_HERE.md (быстрый старт)
+- DEPLOY.md (инструкция по развертыванию)
+- supabase_setup.sql (SQL для создания таблиц)
+
+Следующие шаги:
+1. cd C:\Users\Nishiki\Documents\GitHub\rplavka
+2. git init (если ещё не сделано)
+3. git add .
+4. git commit -m "Initial commit: RP LAVKA Mini App"
+5. git remote add origin https://github.com/твой_username/rplavka.git
+6. git push -u origin main
+
+После этого:
+- Включи GitHub Pages в Settings → Pages
+- Выполни SQL из supabase_setup.sql в Supabase
+- Обнови MINI_APP_URL в bot.py
+- Запусти бота: python bot.py
