@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=26">
+    <link rel="stylesheet" href="style.css?v=27">
 </head>
 <body>
     <div class="container">
@@ -83,6 +83,41 @@
             </div>
         </div>
 
+        <!-- Страница пополнения баланса (скрыта по умолчанию) -->
+        <div class="topup-page" id="topup-page" style="display: none;">
+            <div class="profile-header">
+                <button class="back-btn" onclick="closeTopup()">← Назад</button>
+                <h2 class="profile-title">ПОПОЛНЕНИЕ БАЛАНСА</h2>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-info-section">
+                    <div class="profile-field">
+                        <label>Сумма пополнения (₽)</label>
+                        <input type="number" id="topup-amount" placeholder="Например: 1000" min="100">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label>Способ оплаты</label>
+                        <select id="topup-method">
+                            <option value="">Выберите способ</option>
+                            <option value="card">💳 Банковская карта</option>
+                            <option value="sbp">📱 СБП (Система быстрых платежей)</option>
+                            <option value="yoomoney">💰 ЮMoney</option>
+                            <option value="qiwi">🥝 QIWI</option>
+                        </select>
+                    </div>
+                    
+                    <button class="save-profile-btn" onclick="processTopup()">Продолжить</button>
+                    
+                    <div class="topup-info">
+                        <p>💡 Минимальная сумма пополнения: 100₽</p>
+                        <p>⚡ Средства зачисляются моментально</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Страница профиля (скрыта по умолчанию) -->
         <div class="profile-page" id="profile-page" style="display: none;">
             <div class="profile-header">
@@ -109,8 +144,10 @@
                     <div class="profile-info-section">
                         <!-- Баланс -->
                         <div class="profile-balance-card">
-                            <div class="balance-label">Баланс</div>
-                            <div class="balance-amount" id="user-balance">0 ₽</div>
+                            <div class="balance-info">
+                                <div class="balance-label">Баланс</div>
+                                <div class="balance-amount" id="user-balance">0 ₽</div>
+                            </div>
                             <button class="topup-btn" onclick="openTopup()">💳 Пополнить</button>
                         </div>
                         
@@ -502,7 +539,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v26</div>
+                    <div class="user-version">v27</div>
                 </div>
             </div>
         </div>
@@ -523,6 +560,6 @@
     
     <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
-    <script src="app.js?v=26"></script>
+    <script src="app.js?v=27"></script>
 </body>
 </html>

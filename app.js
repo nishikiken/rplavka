@@ -566,13 +566,53 @@ async function deleteListing(listingId) {
 
 // Открыть пополнение баланса
 function openTopup() {
+    document.getElementById('topup-page').style.display = 'block';
+    document.getElementById('profile-page').style.display = 'none';
+    document.getElementById('publications-section').style.display = 'none';
+    document.getElementById('user-profile-card').style.display = 'none';
+    
+    // Очищаем форму
+    document.getElementById('topup-amount').value = '';
+    document.getElementById('topup-method').value = '';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('medium');
+    debugLog('Topup page opened', 'info');
+}
+
+// Закрыть пополнение
+function closeTopup() {
+    document.getElementById('topup-page').style.display = 'none';
+    document.getElementById('profile-page').style.display = 'block';
+    document.getElementById('user-profile-card').style.display = 'none';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Обработать пополнение
+function processTopup() {
+    const amount = document.getElementById('topup-amount').value;
+    const method = document.getElementById('topup-method').value;
+    
+    if (!amount || amount < 100) {
+        if (tg) tg.showAlert('Минимальная сумма пополнения: 100₽');
+        else alert('Минимальная сумма пополнения: 100₽');
+        return;
+    }
+    
+    if (!method) {
+        if (tg) tg.showAlert('Выберите способ оплаты');
+        else alert('Выберите способ оплаты');
+        return;
+    }
+    
+    debugLog('Topup attempt: amount=' + amount + ', method=' + method, 'info');
+    
     if (tg) {
-        tg.showAlert('Функция пополнения баланса будет доступна в следующей версии');
+        tg.showAlert('⚠️ Система пополнения находится на технических работах. Попробуйте позже.');
         tg.HapticFeedback.notificationOccurred('warning');
     } else {
-        alert('Функция пополнения баланса будет доступна в следующей версии');
+        alert('⚠️ Система пополнения находится на технических работах. Попробуйте позже.');
     }
-    debugLog('Topup button clicked (not implemented yet)', 'info');
 }
 
 // Делаем функции глобальными
@@ -588,3 +628,5 @@ window.toggleDebugConsole = toggleDebugConsole;
 window.clearDebugConsole = clearDebugConsole;
 window.copyDebugLogs = copyDebugLogs;
 window.openTopup = openTopup;
+window.closeTopup = closeTopup;
+window.processTopup = processTopup;
