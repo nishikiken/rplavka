@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=14">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -16,8 +16,55 @@
             <h1 class="logo-title">RP LAVKA</h1>
         </div>
 
+        <!-- Страница профиля (скрыта по умолчанию) -->
+        <div class="profile-page" id="profile-page" style="display: none;">
+            <div class="profile-header">
+                <button class="back-btn" onclick="closeProfile()">← Назад</button>
+                <h2 class="profile-title">МОЙ ПРОФИЛЬ</h2>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar-large" id="profile-avatar-large">
+                        <div class="avatar-placeholder">👤</div>
+                    </div>
+                    <button class="change-avatar-btn" onclick="changeAvatar()">Изменить фото</button>
+                </div>
+                
+                <div class="profile-info-section">
+                    <div class="profile-field">
+                        <label>Имя пользователя</label>
+                        <input type="text" id="profile-name-input" placeholder="Ваше имя">
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label>Рейтинг</label>
+                        <div class="profile-rating-display" id="profile-rating-display">⭐⭐⭐⭐⭐</div>
+                    </div>
+                    
+                    <div class="profile-field">
+                        <label>Telegram ID</label>
+                        <div class="profile-telegram-id" id="profile-telegram-id">—</div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-deals">0</div>
+                            <div class="stat-label">Сделок</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="stat-reviews">0</div>
+                            <div class="stat-label">Отзывов</div>
+                        </div>
+                    </div>
+                    
+                    <button class="save-profile-btn" onclick="saveProfile()">Сохранить изменения</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Публикации -->
-        <div class="publications-section">
+        <div class="publications-section" id="publications-section">
             <!-- Приветственный экран (показывается по умолчанию) -->
             <div class="welcome-screen" id="welcome-screen">
                 <div class="welcome-content">
@@ -173,6 +220,188 @@
                         <div class="banner-text">1кк - 710₽</div>
                     </div>
                 </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">La Mesa</div>
+                            <div class="seller-username">mesa_trader</div>
+                            <div class="seller-rating">⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 695₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Burton</div>
+                            <div class="seller-username">burton_shop</div>
+                            <div class="seller-rating">⭐⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 730₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Rockford</div>
+                            <div class="seller-username">rockford_virt</div>
+                            <div class="seller-rating">⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 660₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Alta</div>
+                            <div class="seller-username">alta_money</div>
+                            <div class="seller-rating">⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 685₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Del Perro</div>
+                            <div class="seller-username">delperro_trade</div>
+                            <div class="seller-rating">⭐⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 740₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Davis</div>
+                            <div class="seller-username">davis_seller</div>
+                            <div class="seller-rating">⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 640₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Harmony</div>
+                            <div class="seller-username">harmony_virt</div>
+                            <div class="seller-rating">⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 675₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Redwood</div>
+                            <div class="seller-username">redwood_shop</div>
+                            <div class="seller-rating">⭐⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 760₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Grapeseed</div>
+                            <div class="seller-username">grape_trader</div>
+                            <div class="seller-rating">⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 630₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Murrieta</div>
+                            <div class="seller-username">murrieta_money</div>
+                            <div class="seller-rating">⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 690₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">VesPucci</div>
+                            <div class="seller-username">vespucci_virt</div>
+                            <div class="seller-rating">⭐⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 780₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">Milton</div>
+                            <div class="seller-username">milton_trade</div>
+                            <div class="seller-rating">⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 705₽</div>
+                    </div>
+                </div>
+
+                <div class="seller-card">
+                    <div class="seller-info">
+                        <div class="seller-details">
+                            <div class="seller-name">La Puerta</div>
+                            <div class="seller-username">lapuerta_seller</div>
+                            <div class="seller-rating">⭐⭐⭐⭐⭐</div>
+                        </div>
+                        <div class="seller-avatar">👤</div>
+                    </div>
+                    <div class="seller-banner">
+                        <div class="banner-text">1кк - 750₽</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -208,65 +437,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- Модальное окно личного кабинета -->
-        <div class="modal" id="profile-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Личный кабинет</h2>
-                    <button class="close-btn" onclick="closeProfile()">✕</button>
-                </div>
-                <div class="modal-body">
-                    <div class="profile-section">
-                        <label>Никнейм для объявлений</label>
-                        <input type="text" id="nickname-input" placeholder="rp_dealer" maxlength="14">
-                        <div class="input-hint">Только латиница, до 14 символов</div>
-                        <button class="save-btn" onclick="saveNickname()">Сохранить</button>
-                    </div>
-                    <div class="profile-section">
-                        <button class="create-listing-btn" onclick="openCreateListing()">
-                            <span>📝</span>
-                            Создать объявление
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Модальное окно создания объявления -->
-        <div class="modal" id="listing-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Новое объявление</h2>
-                    <button class="close-btn" onclick="closeCreateListing()">✕</button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Сервер</label>
-                        <select id="server-select">
-                            <option value="">Выберите сервер</option>
-                            <option value="Braddock">Braddock</option>
-                            <option value="Scottdale">Scottdale</option>
-                            <option value="Sunrise">Sunrise</option>
-                            <option value="Red-Rock">Red-Rock</option>
-                            <option value="Prescott">Prescott</option>
-                            <option value="Winslow">Winslow</option>
-                            <option value="Payson">Payson</option>
-                            <option value="Gilbert">Gilbert</option>
-                            <option value="Mesa">Mesa</option>
-                            <option value="Yuma">Yuma</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Цена за 1кк (₽)</label>
-                        <input type="number" id="price-input" placeholder="100" min="1">
-                    </div>
-                    <button class="publish-btn" onclick="publishListing()">Опубликовать</button>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <script src="app.js?v=14"></script>
+    <script src="app.js"></script>
 </body>
 </html>
