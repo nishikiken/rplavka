@@ -4,14 +4,17 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 // Debug Console
 const debugLogs = [];
+const originalLog = console.log;
+const originalError = console.error;
+const originalWarn = console.warn;
 
 function debugLog(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString();
     const log = { timestamp, message, type };
     debugLogs.push(log);
     
-    // Также выводим в обычный console
-    console.log(`[${type.toUpperCase()}] ${message}`);
+    // Выводим в обычный console используя оригинальные функции
+    originalLog.call(console, `[${type.toUpperCase()}] ${message}`);
     
     // Обновляем UI если консоль открыта
     const debugContent = document.getElementById('debug-content');
@@ -25,9 +28,9 @@ function debugLog(message, type = 'info') {
 }
 
 function toggleDebugConsole() {
-    const console = document.getElementById('debug-console');
-    if (console.style.display === 'none') {
-        console.style.display = 'flex';
+    const consoleEl = document.getElementById('debug-console');
+    if (consoleEl.style.display === 'none') {
+        consoleEl.style.display = 'flex';
         // Загружаем все логи
         const debugContent = document.getElementById('debug-content');
         debugContent.innerHTML = '';
@@ -39,7 +42,7 @@ function toggleDebugConsole() {
         });
         debugContent.scrollTop = debugContent.scrollHeight;
     } else {
-        console.style.display = 'none';
+        consoleEl.style.display = 'none';
     }
 }
 
@@ -59,22 +62,20 @@ function copyDebugLogs() {
 }
 
 // Перехватываем console.log, console.error, console.warn
-const originalLog = console.log;
-const originalError = console.error;
-const originalWarn = console.warn;
-
 console.log = function(...args) {
-    debugLog(args.join(' '), 'info');
-    originalLog.apply(console, args);
+    const message = args.join(' ');
+    debugLog(message, 'info');
 };
 
 console.error = function(...args) {
-    debugLog(args.join(' '), 'error');
+    const message = args.join(' ');
+    debugLog(message, 'error');
     originalError.apply(console, args);
 };
 
 console.warn = function(...args) {
-    debugLog(args.join(' '), 'warn');
+    const message = args.join(' ');
+    debugLog(message, 'warn');
     originalWarn.apply(console, args);
 };
 
