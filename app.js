@@ -2,7 +2,83 @@
 const SUPABASE_URL = 'https://hyxyablgkjtoxcxnurkk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eHlhYmxna2p0b3hjeG51cmtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODE5NjksImV4cCI6MjA4NDc1Nzk2OX0._3HQYSymZ2ArXIN143gAiwulCL1yt7i5fiHaTd4bp5U';
 
-console.log('=== RP LAVKA LOADED ===');
+// Debug Console
+const debugLogs = [];
+
+function debugLog(message, type = 'info') {
+    const timestamp = new Date().toLocaleTimeString();
+    const log = { timestamp, message, type };
+    debugLogs.push(log);
+    
+    // Также выводим в обычный console
+    console.log(`[${type.toUpperCase()}] ${message}`);
+    
+    // Обновляем UI если консоль открыта
+    const debugContent = document.getElementById('debug-content');
+    if (debugContent) {
+        const logEl = document.createElement('div');
+        logEl.className = `debug-log ${type}`;
+        logEl.innerHTML = `<span class="debug-log-time">${timestamp}</span>${message}`;
+        debugContent.appendChild(logEl);
+        debugContent.scrollTop = debugContent.scrollHeight;
+    }
+}
+
+function toggleDebugConsole() {
+    const console = document.getElementById('debug-console');
+    if (console.style.display === 'none') {
+        console.style.display = 'flex';
+        // Загружаем все логи
+        const debugContent = document.getElementById('debug-content');
+        debugContent.innerHTML = '';
+        debugLogs.forEach(log => {
+            const logEl = document.createElement('div');
+            logEl.className = `debug-log ${log.type}`;
+            logEl.innerHTML = `<span class="debug-log-time">${log.timestamp}</span>${log.message}`;
+            debugContent.appendChild(logEl);
+        });
+        debugContent.scrollTop = debugContent.scrollHeight;
+    } else {
+        console.style.display = 'none';
+    }
+}
+
+function clearDebugConsole() {
+    debugLogs.length = 0;
+    document.getElementById('debug-content').innerHTML = '';
+    debugLog('Console cleared', 'info');
+}
+
+function copyDebugLogs() {
+    const text = debugLogs.map(log => `[${log.timestamp}] [${log.type.toUpperCase()}] ${log.message}`).join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Логи скопированы в буфер обмена');
+    }).catch(err => {
+        alert('Ошибка копирования: ' + err);
+    });
+}
+
+// Перехватываем console.log, console.error, console.warn
+const originalLog = console.log;
+const originalError = console.error;
+const originalWarn = console.warn;
+
+console.log = function(...args) {
+    debugLog(args.join(' '), 'info');
+    originalLog.apply(console, args);
+};
+
+console.error = function(...args) {
+    debugLog(args.join(' '), 'error');
+    originalError.apply(console, args);
+};
+
+console.warn = function(...args) {
+    debugLog(args.join(' '), 'warn');
+    originalWarn.apply(console, args);
+};
+
+debugLog('=== RP LAVKA LOADED ===', 'info');
 
 // Инициализация Supabase
 let supabaseClient;
@@ -500,3 +576,6 @@ window.publishListing = publishListing;
 window.switchProfileTab = switchProfileTab;
 window.loadMyListings = loadMyListings;
 window.deleteListing = deleteListing;
+window.toggleDebugConsole = toggleDebugConsole;
+window.clearDebugConsole = clearDebugConsole;
+window.copyDebugLogs = copyDebugLogs;

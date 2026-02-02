@@ -495,11 +495,26 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v21</div>
+                    <div class="user-version">v22</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Debug Console -->
+    <div class="debug-console" id="debug-console" style="display: none;">
+        <div class="debug-header">
+            <span>Debug Console</span>
+            <button class="debug-close" onclick="toggleDebugConsole()">✕</button>
+        </div>
+        <div class="debug-content" id="debug-content"></div>
+        <div class="debug-footer">
+            <button onclick="clearDebugConsole()">Clear</button>
+            <button onclick="copyDebugLogs()">Copy</button>
+        </div>
+    </div>
+    
+    <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
     <script src="app.js"></script>
 </body>
