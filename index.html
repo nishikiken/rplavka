@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RP LAVKA - Магазин виртуальной валюты</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="palm-left"></div>
+    <div class="palm-right"></div>
+    
+    <div class="container">
+        <div class="logo-section">
+            <div class="cart-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 2L7 6H3L6 20H18L21 6H17L15 2H9Z"/>
+                    <circle cx="9" cy="21" r="1"/>
+                    <circle cx="17" cy="21" r="1"/>
+                </svg>
+            </div>
+            <h1 class="main-title">RP LAVKA</h1>
+        </div>
+
+        <div class="car-section">
+            <img src="car.png" alt="Porsche" class="car-image">
+            <div class="money-rain"></div>
+        </div>
+
+        <div class="menu-section">
+            <button class="menu-btn buy-btn">
+                <span class="btn-icon">💰</span>
+                <span>КУПИТЬ</span>
+            </button>
+            <button class="menu-btn sell-btn">
+                <span class="btn-icon">💸</span>
+                <span>ПРОДАТЬ</span>
+            </button>
+        </div>
+
+        <div class="publications-section">
+            <h2 class="section-title">ПУБЛИКАЦИИ О ПРОДАЖЕ</h2>
+            
+            <div class="seller-card">
+                <div class="seller-info">
+                    <div class="seller-avatar"></div>
+                    <div class="seller-details">
+                        <div class="seller-name">ALTA</div>
+                        <div class="seller-username">от продавца: swagseason666</div>
+                        <div class="seller-rating">рейтинг: ⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="seller-banner">
+                    <div class="banner-text">БАННЕР<br>ПОЛЬЗОВАТЕЛЯ</div>
+                </div>
+            </div>
+
+            <div class="seller-card">
+                <div class="seller-info">
+                    <div class="seller-avatar"></div>
+                    <div class="seller-details">
+                        <div class="seller-name">ALTA</div>
+                        <div class="seller-username">от продавца: swagseason666</div>
+                        <div class="seller-rating">рейтинг: ⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="seller-banner">
+                    <div class="banner-text">БАННЕР<br>ПОЛЬЗОВАТЕЛЯ</div>
+                </div>
+            </div>
+
+            <div class="seller-card">
+                <div class="seller-info">
+                    <div class="seller-avatar"></div>
+                    <div class="seller-details">
+                        <div class="seller-name">ALTA</div>
+                        <div class="seller-username">от продавца: swagseason666</div>
+                        <div class="seller-rating">рейтинг: ⭐⭐⭐</div>
+                    </div>
+                </div>
+                <div class="seller-banner">
+                    <div class="banner-text">БАННЕР<br>ПОЛЬЗОВАТЕЛЯ</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-btn active">
+                <span class="nav-icon">💰</span>
+                <span>BUY</span>
+            </button>
+            <button class="nav-btn">
+                <span class="nav-icon">💸</span>
+                <span>SELL</span>
+            </button>
+            <div class="user-profile">
+                <div class="profile-avatar"></div>
+                <div class="profile-info">
+                    <div class="profile-name">swagseason666</div>
+                    <div class="profile-rating">Рейтинг: ⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

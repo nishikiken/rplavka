@@ -1,0 +1,322 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', 'Arial', sans-serif;
+    background: linear-gradient(180deg, #0a1f1a 0%, #051510 50%, #000000 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.palm-left, .palm-right {
+    position: fixed;
+    top: 0;
+    width: 300px;
+    height: 100vh;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200"><path d="M50 0 Q30 50 40 100 Q35 150 50 200" fill="none" stroke="%23001a0f" stroke-width="20" opacity="0.3"/></svg>');
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.palm-left {
+    left: -100px;
+    transform: scaleX(-1);
+}
+
+.palm-right {
+    right: -100px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Логотип */
+.logo-section {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.cart-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    color: #00ff88;
+    filter: drop-shadow(0 0 30px #00ff88) drop-shadow(0 0 60px #00ff88);
+    animation: neonPulse 2s ease-in-out infinite;
+}
+
+.cart-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.main-title {
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: #ffffff;
+    text-shadow: 
+        0 0 10px #00ff88,
+        0 0 20px #00ff88,
+        0 0 40px #00ff88,
+        0 0 80px #00ff88;
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+    0%, 100% { filter: drop-shadow(0 0 30px #00ff88) drop-shadow(0 0 60px #00ff88); }
+    50% { filter: drop-shadow(0 0 40px #00ff88) drop-shadow(0 0 80px #00ff88); }
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88, 0 0 40px #00ff88; }
+    50% { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88, 0 0 80px #00ff88; }
+}
+
+/* Машина */
+.car-section {
+    position: relative;
+    height: 300px;
+    margin: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.car-image {
+    width: 100%;
+    max-width: 500px;
+    filter: drop-shadow(0 10px 30px rgba(0, 255, 136, 0.5));
+    animation: carFloat 3s ease-in-out infinite;
+}
+
+@keyframes carFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.money-rain {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+/* Кнопки меню */
+.menu-section {
+    display: flex;
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.menu-btn {
+    flex: 1;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    border: 3px solid #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.menu-btn:hover {
+    background: rgba(0, 255, 136, 0.2);
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-icon {
+    font-size: 28px;
+}
+
+/* Публикации */
+.publications-section {
+    margin: 40px 0;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #888;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.seller-card {
+    background: #1a1a1a;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    border: 2px solid #2a2a2a;
+    transition: all 0.3s ease;
+}
+
+.seller-card:hover {
+    border-color: #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.seller-info {
+    display: flex;
+    gap: 15px;
+    min-width: 200px;
+}
+
+.seller-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #333;
+    flex-shrink: 0;
+}
+
+.seller-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.seller-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00d4ff;
+    margin-bottom: 5px;
+}
+
+.seller-username {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.seller-rating {
+    font-size: 12px;
+    color: #ffaa00;
+}
+
+.seller-banner {
+    flex: 1;
+    background: #2a2a2a;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.banner-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: #666;
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #0a0a0a;
+    border-top: 2px solid #00ff88;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -5px 30px rgba(0, 255, 136, 0.3);
+    z-index: 100;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 2px solid #00ff88;
+    color: #00ff88;
+    padding: 10px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    background: rgba(0, 255, 136, 0.2);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.nav-icon {
+    font-size: 20px;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #333;
+    border: 2px solid #00ff88;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.profile-rating {
+    font-size: 11px;
+    color: #ffaa00;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 48px;
+    }
+    
+    .seller-card {
+        flex-direction: column;
+    }
+    
+    .bottom-nav {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
