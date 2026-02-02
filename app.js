@@ -109,7 +109,8 @@ function calculateRating(avgRating) {
 
 // Показать детали объявления
 function showListingDetails(listing) {
-    alert(`${listing.game}\n\nКоличество: ${listing.amount}\nЦена: ${listing.price}₽\n\nПродавец: ${listing.seller.name}`);
+    const typeLabel = listing.listing_type === 'sell' ? 'Продаю' : 'Скупаю';
+    alert(`${listing.game}\n\nТип: ${typeLabel}\nКоличество: ${listing.amount}кк\nЦена: ${listing.price}₽\n\nПродавец: ${listing.seller.name}`);
 }
 
 // Загрузка данных пользователя
@@ -348,17 +349,22 @@ async function publishListing() {
     }
 }
 
-// Переключение вкладок профиля
+// Переключение вкладок профиля с анимацией индикатора
 function switchProfileTab(tab) {
+    const tabs = document.querySelectorAll('.profile-tab');
+    const indicator = document.querySelector('.profile-tab-indicator');
+    
     // Обновляем активную вкладку
-    document.querySelectorAll('.profile-tab').forEach(btn => btn.classList.remove('active'));
+    tabs.forEach(btn => btn.classList.remove('active'));
     
     if (tab === 'info') {
-        document.querySelectorAll('.profile-tab')[0].classList.add('active');
+        tabs[0].classList.add('active');
+        indicator.style.transform = 'translateX(0%)';
         document.getElementById('profile-tab-info').style.display = 'block';
         document.getElementById('profile-tab-listings').style.display = 'none';
     } else if (tab === 'listings') {
-        document.querySelectorAll('.profile-tab')[1].classList.add('active');
+        tabs[1].classList.add('active');
+        indicator.style.transform = 'translateX(100%)';
         document.getElementById('profile-tab-info').style.display = 'none';
         document.getElementById('profile-tab-listings').style.display = 'block';
         
@@ -425,18 +431,29 @@ function renderMyListings(listings) {
 
 // Удалить объявление
 async function deleteListing(listingId) {
-    if (!supabaseClient) return;
+    if (!supabaseClient) {
+        alert('Ошибка: нет подключения к базе данных');
+        return;
+    }
     
     const confirmed = confirm('Удалить это объявление?');
     if (!confirmed) return;
     
     try {
-        const { error } = await supabaseClient
+        console.log('Deleting listing:', listingId);
+        
+        const { data, error } = await supabaseClient
             .from('rplavka_listings')
             .update({ status: 'deleted' })
-            .eq('id', listingId);
+            .eq('id', listingId)
+            .select();
         
-        if (error) throw error;
+        if (error) {
+            console.error('Delete error:', error);
+            throw error;
+        }
+        
+        console.log('Deleted successfully:', data);
         
         if (tg) {
             tg.showAlert('Объявление удалено');
@@ -450,10 +467,11 @@ async function deleteListing(listingId) {
         loadListings(); // Обновляем главную страницу
     } catch (error) {
         console.error('Error deleting listing:', error);
+        const errorMsg = 'Ошибка при удалении: ' + (error.message || 'неизвестная ошибка');
         if (tg) {
-            tg.showAlert('Ошибка при удалении');
+            tg.showAlert(errorMsg);
         } else {
-            alert('Ошибка при удалении');
+            alert(errorMsg);
         }
     }
 }

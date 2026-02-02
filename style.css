@@ -660,6 +660,7 @@ body {
 
 /* Вкладки профиля */
 .profile-tabs {
+    position: relative;
     display: flex;
     gap: 8px;
     margin-bottom: 24px;
@@ -669,6 +670,20 @@ body {
     border: 1px solid rgba(0, 255, 136, 0.2);
     border-radius: 16px;
     padding: 6px;
+}
+
+.profile-tab-indicator {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc(50% - 10px);
+    height: calc(100% - 12px);
+    background: rgba(0, 255, 136, 0.15);
+    border-radius: 12px;
+    box-shadow: 0 0 15px var(--neon-green-glow);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 0;
 }
 
 .profile-tab {
@@ -681,13 +696,13 @@ body {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .profile-tab.active {
-    background: rgba(0, 255, 136, 0.15);
     color: var(--neon-green);
-    box-shadow: 0 0 15px var(--neon-green-glow);
 }
 
 .profile-tab:active {
