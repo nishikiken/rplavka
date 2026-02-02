@@ -30,66 +30,81 @@ body {
     padding-bottom: 140px;
 }
 
-/* Логотип с неоном */
+/* Логотип */
 .logo-section {
     text-align: center;
-    padding: 30px 0;
-    margin-bottom: 20px;
+    padding: 20px 0 16px;
 }
 
-.cart-icon {
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 16px;
-    color: var(--neon-green);
-    filter: drop-shadow(0 0 20px var(--neon-green)) 
-            drop-shadow(0 0 40px var(--neon-green))
-            drop-shadow(0 0 60px var(--neon-green));
+.logo-icon {
+    font-size: 56px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 15px var(--neon-green));
     animation: neonPulse 2s ease-in-out infinite;
 }
 
-.cart-icon svg {
-    width: 100%;
-    height: 100%;
-}
-
-.main-title {
-    font-size: 56px;
+.logo-title {
+    font-size: 36px;
     font-weight: 900;
-    letter-spacing: 8px;
+    letter-spacing: 6px;
     color: #ffffff;
     text-shadow: 
         0 0 10px var(--neon-green),
         0 0 20px var(--neon-green),
-        0 0 40px var(--neon-green),
-        0 0 80px var(--neon-green);
+        0 0 40px var(--neon-green);
     animation: titleGlow 3s ease-in-out infinite;
 }
 
 @keyframes neonPulse {
-    0%, 100% { 
-        filter: drop-shadow(0 0 20px var(--neon-green)) 
-                drop-shadow(0 0 40px var(--neon-green)); 
-    }
-    50% { 
-        filter: drop-shadow(0 0 30px var(--neon-green)) 
-                drop-shadow(0 0 60px var(--neon-green))
-                drop-shadow(0 0 80px var(--neon-green)); 
-    }
+    0%, 100% { filter: drop-shadow(0 0 15px var(--neon-green)); }
+    50% { filter: drop-shadow(0 0 25px var(--neon-green)); }
 }
 
 @keyframes titleGlow {
-    0%, 100% { 
-        text-shadow: 0 0 10px var(--neon-green), 
-                     0 0 20px var(--neon-green), 
-                     0 0 40px var(--neon-green); 
-    }
-    50% { 
-        text-shadow: 0 0 20px var(--neon-green), 
-                     0 0 40px var(--neon-green), 
-                     0 0 80px var(--neon-green),
-                     0 0 120px var(--neon-green); 
-    }
+    0%, 100% { text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green); }
+    50% { text-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green); }
+}
+
+/* Кнопки BUY/SELL сверху */
+.mode-buttons-top {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 0 4px;
+}
+
+.mode-btn-top {
+    flex: 1;
+    background: rgba(26, 47, 42, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    border-radius: 14px;
+    padding: 14px;
+    color: var(--neon-green);
+    font-size: 15px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.mode-btn-top.active {
+    background: rgba(0, 255, 136, 0.2);
+    border-color: var(--neon-green);
+    box-shadow: 0 0 20px var(--neon-green-glow), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.mode-btn-top:active {
+    transform: scale(0.97);
+}
+
+.btn-icon {
+    font-size: 18px;
 }
 
 /* Публикации */
@@ -112,7 +127,7 @@ body {
     gap: 12px;
 }
 
-/* Карточка продавца (glassmorphism) */
+/* Карточка продавца */
 .seller-card {
     background: rgba(26, 47, 42, 0.4);
     backdrop-filter: blur(10px);
@@ -204,23 +219,22 @@ body {
     line-height: 1.4;
 }
 
-/* Glassmorphism плашка пользователя (как в campus_bot) */
+/* Glassmorphism плашка пользователя (ТОЧНО как в campus_bot) */
 .user-profile-card {
     position: fixed;
     bottom: 20px;
     left: 16px;
     right: 16px;
-    background: rgba(10, 31, 26, 0.8);
+    background: rgba(40, 40, 45, 0.6);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 255, 136, 0.3);
+    border: none;
     border-radius: 20px;
-    padding: 14px 18px;
+    padding: 16px 20px;
     box-shadow: 
         0 0 30px rgba(0, 0, 0, 0.8),
         0 0 60px rgba(0, 0, 0, 0.5),
         0 8px 32px rgba(0, 0, 0, 0.6),
-        0 0 40px var(--neon-green-glow),
         inset 0 1px 1px rgba(255, 255, 255, 0.15),
         inset 0 -1px 2px rgba(0, 0, 0, 0.3);
     z-index: 100;
@@ -237,54 +251,35 @@ body {
     bottom: 0;
     border-radius: 20px;
     overflow: hidden;
+    z-index: 1;
     pointer-events: none;
-    opacity: 0.3;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
-.mode-buttons {
+.user-balance {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-}
-
-.mode-btn {
-    background: rgba(0, 255, 136, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(0, 255, 136, 0.3);
-    border-radius: 10px;
-    padding: 8px 12px;
-    color: var(--neon-green);
-    font-size: 12px;
-    font-weight: 700;
-    display: flex;
     align-items: center;
-    justify-content: center;
     gap: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 70px;
 }
 
-.mode-btn.active {
-    background: rgba(0, 255, 136, 0.25);
-    border-color: var(--neon-green);
-    box-shadow: 0 0 15px var(--neon-green-glow);
+.balance-icon {
+    font-size: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-.mode-btn:active {
-    transform: scale(0.95);
-}
-
-.btn-icon {
-    font-size: 14px;
+.balance-amount {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
 .user-details {
@@ -295,26 +290,32 @@ body {
 }
 
 .user-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .user-rating {
-    font-size: 12px;
-    color: var(--tg-theme-hint-color);
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    font-size: 13px;
 }
 
 .rating-label {
-    font-size: 11px;
+    font-size: 13px;
+    color: var(--tg-theme-hint-color);
+    font-weight: 500;
+}
+
+.rating-icon {
+    font-size: 14px;
 }
 
 .rating-value {
-    color: #ffaa00;
-    font-size: 11px;
+    font-weight: 600;
+    color: var(--tg-theme-text-color);
 }
 
 .user-avatar-wrapper {
@@ -328,15 +329,17 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: rgba(0, 255, 136, 0.1);
-    border: 2px solid var(--neon-green);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.15);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    flex-shrink: 0;
-    box-shadow: 0 0 20px var(--neon-green-glow);
-    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.5),
+        0 2px 6px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .user-avatar img {
@@ -346,34 +349,22 @@ body {
 }
 
 .avatar-placeholder {
-    font-size: 24px;
-}
-
-/* Анимации */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    font-size: 28px;
 }
 
 /* Адаптивность */
 @media (max-width: 360px) {
-    .main-title {
+    .logo-title {
+        font-size: 32px;
+        letter-spacing: 4px;
+    }
+    
+    .logo-icon {
         font-size: 48px;
-        letter-spacing: 6px;
     }
     
-    .cart-icon {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .seller-name {
+    .mode-btn-top {
         font-size: 14px;
-    }
-    
-    .mode-btn {
-        font-size: 11px;
-        padding: 6px 10px;
-        min-width: 60px;
+        padding: 12px;
     }
 }

@@ -33,7 +33,7 @@ function switchMode(mode) {
     currentMode = mode;
     
     // Обновляем активную кнопку
-    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.mode-btn-top').forEach(btn => btn.classList.remove('active'));
     if (mode === 'buy') {
         document.querySelector('.buy-btn').classList.add('active');
         document.getElementById('section-title').textContent = 'ПУБЛИКАЦИИ О ПРОДАЖЕ';
