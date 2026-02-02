@@ -2,23 +2,17 @@
 const SUPABASE_URL = 'https://hyxyablgkjtoxcxnurkk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eHlhYmxna2p0b3hjeG51cmtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODE5NjksImV4cCI6MjA4NDc1Nzk2OX0._3HQYSymZ2ArXIN143gAiwulCL1yt7i5fiHaTd4bp5U';
 
-// Debug Console
+// Debug Console - простая реализация без перехвата console
 const debugLogs = [];
-const originalLog = console.log;
-const originalError = console.error;
-const originalWarn = console.warn;
 
 function debugLog(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString();
     const log = { timestamp, message, type };
     debugLogs.push(log);
     
-    // Выводим в обычный console используя оригинальные функции
-    originalLog.call(console, `[${type.toUpperCase()}] ${message}`);
-    
     // Обновляем UI если консоль открыта
     const debugContent = document.getElementById('debug-content');
-    if (debugContent) {
+    if (debugContent && document.getElementById('debug-console').style.display !== 'none') {
         const logEl = document.createElement('div');
         logEl.className = `debug-log ${type}`;
         logEl.innerHTML = `<span class="debug-log-time">${timestamp}</span>${message}`;
@@ -61,34 +55,20 @@ function copyDebugLogs() {
     });
 }
 
-// Перехватываем console.log, console.error, console.warn
-console.log = function(...args) {
-    const message = args.join(' ');
-    debugLog(message, 'info');
-};
-
-console.error = function(...args) {
-    const message = args.join(' ');
-    debugLog(message, 'error');
-    originalError.apply(console, args);
-};
-
-console.warn = function(...args) {
-    const message = args.join(' ');
-    debugLog(message, 'warn');
-    originalWarn.apply(console, args);
-};
-
+console.log('=== RP LAVKA LOADED ===');
 debugLog('=== RP LAVKA LOADED ===', 'info');
 
 // Инициализация Supabase
 let supabaseClient;
 if (window.supabase) {
     console.log('Initializing Supabase...');
+    debugLog('Initializing Supabase...', 'info');
     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     console.log('Supabase initialized');
+    debugLog('Supabase initialized', 'info');
 } else {
     console.warn('Supabase library not loaded');
+    debugLog('Supabase library not loaded', 'warn');
 }
 
 // Telegram Web App
@@ -106,10 +86,12 @@ if (tg) {
 async function loadListings() {
     if (!supabaseClient) {
         console.log('Supabase not available, showing demo listings');
+        debugLog('Supabase not available, showing demo listings', 'warn');
         return;
     }
     
     try {
+        debugLog('Loading all listings...', 'info');
         const { data: listings, error } = await supabaseClient
             .from('rplavka_listings')
             .select('*, seller:rplavka_users!seller_id(*)')
@@ -120,6 +102,7 @@ async function loadListings() {
         if (error) throw error;
         
         console.log('All listings loaded:', listings);
+        debugLog(`Loaded ${listings.length} listings`, 'info');
         
         if (listings && listings.length > 0) {
             renderListings(listings);
@@ -130,6 +113,7 @@ async function loadListings() {
         }
     } catch (error) {
         console.error('Error loading listings:', error);
+        debugLog('Error loading listings: ' + error.message, 'error');
     }
 }
 
@@ -193,10 +177,12 @@ function showListingDetails(listing) {
 // Загрузка данных пользователя
 function loadUserData() {
     console.log('Loading user data...');
+    debugLog('Loading user data...', 'info');
     
     if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
         const user = tg.initDataUnsafe.user;
         console.log('User:', user.first_name);
+        debugLog('User: ' + user.first_name + ' (ID: ' + user.id + ')', 'info');
         
         // Сохраняем userId сразу
         window.currentUserId = user.id;
@@ -216,6 +202,7 @@ function loadUserData() {
         }
     } else {
         console.warn('No Telegram user data');
+        debugLog('No Telegram user data', 'warn');
         document.getElementById('user-name').textContent = 'Гость';
     }
 }
@@ -514,6 +501,7 @@ function renderMyListings(listings) {
 async function deleteListing(listingId) {
     if (!supabaseClient) {
         alert('Ошибка: нет подключения к базе данных');
+        debugLog('Delete failed: no supabase client', 'error');
         return;
     }
     
@@ -527,10 +515,14 @@ async function deleteListing(listingId) {
         confirmed = confirm('Удалить это объявление?');
     }
     
-    if (!confirmed) return;
+    if (!confirmed) {
+        debugLog('Delete cancelled by user', 'info');
+        return;
+    }
     
     try {
         console.log('Deleting listing ID:', listingId);
+        debugLog('Deleting listing ID: ' + listingId + ', user: ' + window.currentUserId, 'info');
         
         // Используем delete вместо update для полного удаления
         const { data, error } = await supabaseClient
@@ -542,10 +534,12 @@ async function deleteListing(listingId) {
         
         if (error) {
             console.error('Delete error details:', error);
+            debugLog('Delete error: ' + JSON.stringify(error), 'error');
             throw error;
         }
         
         console.log('Deleted successfully:', data);
+        debugLog('Deleted successfully: ' + JSON.stringify(data), 'info');
         
         if (tg) {
             tg.showAlert('Объявление удалено');
@@ -560,6 +554,7 @@ async function deleteListing(listingId) {
     } catch (error) {
         console.error('Error deleting listing:', error);
         const errorMsg = 'Ошибка при удалении: ' + (error.message || error.hint || 'неизвестная ошибка');
+        debugLog('Delete exception: ' + errorMsg, 'error');
         if (tg) {
             tg.showAlert(errorMsg);
         } else {
