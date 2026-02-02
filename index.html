@@ -18,9 +18,21 @@
 
         <!-- Публикации -->
         <div class="publications-section">
-            <h2 class="section-title" id="section-title">ПУБЛИКАЦИИ О ПРОДАЖЕ</h2>
+            <!-- Приветственный экран (показывается по умолчанию) -->
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-content">
+                    <p class="welcome-text">Выберите раздел на панели снизу:</p>
+                    <div class="welcome-buttons">
+                        <div class="welcome-hint">💰 <strong>BUY</strong> - купить виртуальную валюту</div>
+                        <div class="welcome-hint">💸 <strong>SELL</strong> - продать виртуальную валюту</div>
+                    </div>
+                </div>
+            </div>
             
-            <div class="listings-container" id="listings-container">
+            <!-- Заголовок раздела (скрыт по умолчанию) -->
+            <h2 class="section-title" id="section-title" style="display: none;">ПУБЛИКАЦИИ О ПРОДАЖЕ</h2>
+            
+            <div class="listings-container" id="listings-container" style="display: none;">
                 <!-- Демо карточки с реальными серверами -->
                 <div class="seller-card">
                     <div class="seller-info">
@@ -170,7 +182,7 @@
             <div class="user-info">
                 <!-- Кнопки BUY/SELL горизонтально -->
                 <div class="mode-buttons">
-                    <button class="mode-btn buy-btn active" onclick="switchMode('buy')">
+                    <button class="mode-btn buy-btn" onclick="switchMode('buy')">
                         <span class="btn-icon">💰</span>
                         <span>BUY</span>
                     </button>
@@ -192,7 +204,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v8</div>
+                    <div class="user-version">v9</div>
                 </div>
             </div>
         </div>

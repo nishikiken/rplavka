@@ -32,14 +32,26 @@ let currentMode = 'buy';
 function switchMode(mode) {
     currentMode = mode;
     
+    // Скрываем приветственный экран
+    const welcomeScreen = document.getElementById('welcome-screen');
+    if (welcomeScreen) {
+        welcomeScreen.style.display = 'none';
+    }
+    
+    // Показываем заголовок и контейнер с объявлениями
+    const sectionTitle = document.getElementById('section-title');
+    const listingsContainer = document.getElementById('listings-container');
+    if (sectionTitle) sectionTitle.style.display = 'block';
+    if (listingsContainer) listingsContainer.style.display = 'flex';
+    
     // Обновляем активную кнопку
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
     if (mode === 'buy') {
         document.querySelector('.buy-btn').classList.add('active');
-        document.getElementById('section-title').textContent = 'ПУБЛИКАЦИИ О ПРОДАЖЕ';
+        sectionTitle.textContent = 'ПУБЛИКАЦИИ О ПРОДАЖЕ';
     } else {
         document.querySelector('.sell-btn').classList.add('active');
-        document.getElementById('section-title').textContent = 'ПУБЛИКАЦИИ О СКУПКЕ';
+        sectionTitle.textContent = 'ПУБЛИКАЦИИ О СКУПКЕ';
     }
     
     // Haptic feedback
