@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
     <div class="container">
@@ -200,16 +200,73 @@
                     </div>
                 </div>
                 <!-- Аватар справа -->
-                <div class="user-avatar-wrapper">
+                <div class="user-avatar-wrapper" onclick="openProfile()">
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v13</div>
+                    <div class="user-version">v14</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно личного кабинета -->
+        <div class="modal" id="profile-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Личный кабинет</h2>
+                    <button class="close-btn" onclick="closeProfile()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="profile-section">
+                        <label>Никнейм для объявлений</label>
+                        <input type="text" id="nickname-input" placeholder="rp_dealer" maxlength="14">
+                        <div class="input-hint">Только латиница, до 14 символов</div>
+                        <button class="save-btn" onclick="saveNickname()">Сохранить</button>
+                    </div>
+                    <div class="profile-section">
+                        <button class="create-listing-btn" onclick="openCreateListing()">
+                            <span>📝</span>
+                            Создать объявление
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно создания объявления -->
+        <div class="modal" id="listing-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Новое объявление</h2>
+                    <button class="close-btn" onclick="closeCreateListing()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Сервер</label>
+                        <select id="server-select">
+                            <option value="">Выберите сервер</option>
+                            <option value="Braddock">Braddock</option>
+                            <option value="Scottdale">Scottdale</option>
+                            <option value="Sunrise">Sunrise</option>
+                            <option value="Red-Rock">Red-Rock</option>
+                            <option value="Prescott">Prescott</option>
+                            <option value="Winslow">Winslow</option>
+                            <option value="Payson">Payson</option>
+                            <option value="Gilbert">Gilbert</option>
+                            <option value="Mesa">Mesa</option>
+                            <option value="Yuma">Yuma</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Цена за 1кк (₽)</label>
+                        <input type="number" id="price-input" placeholder="100" min="1">
+                    </div>
+                    <button class="publish-btn" onclick="publishListing()">Опубликовать</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>
