@@ -2,48 +2,42 @@
 const SUPABASE_URL = 'https://hyxyablgkjtoxcxnurkk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5eHlhYmxna2p0b3hjeG51cmtrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxODE5NjksImV4cCI6MjA4NDc1Nzk2OX0._3HQYSymZ2ArXIN143gAiwulCL1yt7i5fiHaTd4bp5U';
 
-// Debug Console - простая реализация без перехвата console
+// Debug Console - максимально простая реализация
 const debugLogs = [];
 
 function debugLog(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString();
-    const log = { timestamp, message, type };
-    debugLogs.push(log);
-    
-    // Обновляем UI если консоль открыта
-    const debugContent = document.getElementById('debug-content');
-    if (debugContent && document.getElementById('debug-console').style.display !== 'none') {
-        const logEl = document.createElement('div');
-        logEl.className = `debug-log ${type}`;
-        logEl.innerHTML = `<span class="debug-log-time">${timestamp}</span>${message}`;
-        debugContent.appendChild(logEl);
-        debugContent.scrollTop = debugContent.scrollHeight;
-    }
+    debugLogs.push({ timestamp, message, type });
 }
 
 function toggleDebugConsole() {
     const consoleEl = document.getElementById('debug-console');
     if (consoleEl.style.display === 'none') {
         consoleEl.style.display = 'flex';
-        // Загружаем все логи
-        const debugContent = document.getElementById('debug-content');
-        debugContent.innerHTML = '';
-        debugLogs.forEach(log => {
-            const logEl = document.createElement('div');
-            logEl.className = `debug-log ${log.type}`;
-            logEl.innerHTML = `<span class="debug-log-time">${log.timestamp}</span>${log.message}`;
-            debugContent.appendChild(logEl);
-        });
-        debugContent.scrollTop = debugContent.scrollHeight;
+        renderDebugLogs();
     } else {
         consoleEl.style.display = 'none';
     }
 }
 
+function renderDebugLogs() {
+    const debugContent = document.getElementById('debug-content');
+    debugContent.innerHTML = '';
+    debugLogs.forEach(log => {
+        const logEl = document.createElement('div');
+        logEl.className = `debug-log ${log.type}`;
+        logEl.innerHTML = `<span class="debug-log-time">${log.timestamp}</span>${log.message}`;
+        debugContent.appendChild(logEl);
+    });
+    debugContent.scrollTop = debugContent.scrollHeight;
+}
+
 function clearDebugConsole() {
     debugLogs.length = 0;
-    document.getElementById('debug-content').innerHTML = '';
-    debugLog('Console cleared', 'info');
+    const debugContent = document.getElementById('debug-content');
+    if (debugContent) {
+        debugContent.innerHTML = '<div class="debug-log info"><span class="debug-log-time">' + new Date().toLocaleTimeString() + '</span>Console cleared</div>';
+    }
 }
 
 function copyDebugLogs() {
