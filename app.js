@@ -21,9 +21,115 @@ if (tg) {
     tg.expand();
     
     // Применяем тему Telegram
-    document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#000000');
+    document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#0a1f1a');
     document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#ffffff');
-    document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#00ff88');
+}
+
+// Текущий режим (buy/sell)
+let currentMode = 'buy';
+
+// Переключение режима
+function switchMode(mode) {
+    currentMode = mode;
+    
+    // Обновляем активную кнопку
+    document.querySelectorAll('.panel-btn').forEach(btn => btn.classList.remove('active'));
+    if (mode === 'buy') {
+        document.querySelector('.buy-btn').classList.add('active');
+        document.getElementById('section-title').textContent = 'ПУБЛИКАЦИИ О ПРОДАЖЕ';
+    } else {
+        document.querySelector('.sell-btn').classList.add('active');
+        document.getElementById('section-title').textContent = 'ПУБЛИКАЦИИ О СКУПКЕ';
+    }
+    
+    // Haptic feedback
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+    
+    // Загружаем объявления
+    loadListings();
+}
+
+// Загрузка объявлений
+async function loadListings() {
+    if (!supabaseClient) {
+        console.log('Supabase not available, showing demo listings');
+        return;
+    }
+    
+    try {
+        const { data: listings, error } = await supabaseClient
+            .from('rplavka_listings')
+            .select('*, seller:rplavka_users!seller_id(*)')
+            .eq('status', 'active')
+            .order('created_at', { ascending: false })
+            .limit(20);
+        
+        if (error) throw error;
+        
+        console.log('Listings loaded:', listings);
+        
+        if (listings && listings.length > 0) {
+            renderListings(listings);
+        }
+    } catch (error) {
+        console.error('Error loading listings:', error);
+    }
+}
+
+// Отрисовка объявлений
+function renderListings(listings) {
+    const container = document.getElementById('listings-container');
+    container.innerHTML = '';
+    
+    listings.forEach(listing => {
+        const card = document.createElement('div');
+        card.className = 'seller-card';
+        
+        const rating = calculateRating(listing.seller.rating || 0);
+        
+        card.innerHTML = `
+            <div class="seller-info">
+                <div class="seller-details">
+                    <div class="seller-name">${listing.game}</div>
+                    <div class="seller-username">${listing.seller.name}</div>
+                    <div class="seller-rating">${rating}</div>
+                </div>
+                <div class="seller-avatar">
+                    ${listing.seller.avatar_url ? `<img src="${listing.seller.avatar_url}" alt="Avatar">` : '👤'}
+                </div>
+            </div>
+            <div class="seller-banner">
+                <div class="banner-text">${listing.description || 'БАННЕР ПОЛЬЗОВАТЕЛЯ'}</div>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => {
+            if (tg) tg.HapticFeedback.impactOccurred('medium');
+            showListingDetails(listing);
+        });
+        
+        container.appendChild(card);
+    });
+}
+
+// Расчёт рейтинга (средний балл из отзывов)
+function calculateRating(avgRating) {
+    if (!avgRating || avgRating === 0) return '☆☆☆☆☆';
+    
+    const fullStars = Math.floor(avgRating);
+    const hasHalfStar = avgRating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    
+    let stars = '⭐'.repeat(fullStars);
+    if (hasHalfStar) stars += '⭐'; // Можно заменить на половинку если нужно
+    stars += '☆'.repeat(emptyStars);
+    
+    return stars;
+}
+
+// Показать детали объявления
+function showListingDetails(listing) {
+    alert(`${listing.game}\n\nКоличество: ${listing.amount}\nЦена: ${listing.price}₽\n\nПродавец: ${listing.seller.name}`);
 }
 
 // Загрузка данных пользователя
@@ -35,7 +141,13 @@ function loadUserData() {
         console.log('User:', user.first_name);
         
         const userName = user.first_name || user.username || 'Пользователь';
-        document.getElementById('profile-name').textContent = userName;
+        document.getElementById('user-name').textContent = userName;
+        
+        // Устанавливаем аватар
+        const avatarEl = document.getElementById('user-avatar');
+        if (user.photo_url) {
+            avatarEl.innerHTML = `<img src="${user.photo_url}" alt="Avatar">`;
+        }
         
         // Загрузка данных с сервера
         if (supabaseClient) {
@@ -43,7 +155,7 @@ function loadUserData() {
         }
     } else {
         console.warn('No Telegram user data');
-        document.getElementById('profile-name').textContent = 'Гость';
+        document.getElementById('user-name').textContent = 'Гость';
     }
 }
 
@@ -98,7 +210,10 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
         }
         
         console.log('User data loaded:', userData);
-        document.getElementById('profile-rating').textContent = `Рейтинг: ${'⭐'.repeat(userData.rating || 0)}`;
+        
+        // Обновляем рейтинг
+        const rating = calculateRating(userData.rating || 0);
+        document.getElementById('user-rating').textContent = rating;
         
         window.currentUserId = telegramId;
         
@@ -107,60 +222,11 @@ async function loadUserDataFromAPI(telegramId, name, avatarUrl) {
     }
 }
 
-// Анимация падающих денег
-function createMoneyRain() {
-    const moneyRain = document.querySelector('.money-rain');
-    if (!moneyRain) return;
-    
-    setInterval(() => {
-        const money = document.createElement('div');
-        money.textContent = '💵';
-        money.style.position = 'absolute';
-        money.style.left = Math.random() * 100 + '%';
-        money.style.top = '-20px';
-        money.style.fontSize = '24px';
-        money.style.animation = 'fall 3s linear';
-        money.style.opacity = '0.7';
-        
-        moneyRain.appendChild(money);
-        
-        setTimeout(() => {
-            money.remove();
-        }, 3000);
-    }, 300);
-}
-
-// CSS для анимации падения
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes fall {
-        to {
-            transform: translateY(400px) rotate(360deg);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// Обработчики кнопок
-document.querySelectorAll('.menu-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const isBuy = this.classList.contains('buy-btn');
-        if (tg) tg.HapticFeedback.impactOccurred('medium');
-        alert(isBuy ? 'Открыть раздел покупки' : 'Открыть раздел продажи');
-    });
-});
-
-document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        if (tg) tg.HapticFeedback.impactOccurred('light');
-    });
-});
-
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
     loadUserData();
-    createMoneyRain();
+    loadListings();
 });
+
+// Делаем функцию глобальной
+window.switchMode = switchMode;
