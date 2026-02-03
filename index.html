@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=28">
+    <link rel="stylesheet" href="style.css?v=29">
 </head>
 <body>
     <div class="container">
@@ -69,6 +69,12 @@
                     </div>
                     
                     <div class="profile-field">
+                        <label>Минимальная продажа (млн)</label>
+                        <input type="number" id="listing-min-amount" placeholder="Например: 1" min="1">
+                        <div class="field-hint">Минимальное количество для покупки</div>
+                    </div>
+                    
+                    <div class="profile-field">
                         <label>Цена за 1кк (₽)</label>
                         <input type="number" id="listing-price" placeholder="Например: 700" min="1">
                     </div>
@@ -79,6 +85,71 @@
                     </div>
                     
                     <button class="save-profile-btn" onclick="publishListing()">Опубликовать</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Страница детального просмотра лота -->
+        <div class="listing-detail-page" id="listing-detail-page" style="display: none;">
+            <div class="profile-header">
+                <button class="back-btn" onclick="closeListingDetail()">← Назад</button>
+                <h2 class="profile-title">ДЕТАЛИ ЛОТА</h2>
+            </div>
+            
+            <div class="profile-content">
+                <!-- Информация о продавце -->
+                <div class="seller-info-card">
+                    <div class="seller-avatar-large" id="detail-seller-avatar">👤</div>
+                    <div class="seller-details-large">
+                        <div class="seller-name-large" id="detail-seller-name">Продавец</div>
+                        <div class="seller-rating-large" id="detail-seller-rating">⭐⭐⭐⭐⭐</div>
+                    </div>
+                </div>
+                
+                <!-- Информация о лоте -->
+                <div class="listing-info-card">
+                    <div class="listing-info-row">
+                        <span class="info-label">Сервер:</span>
+                        <span class="info-value" id="detail-server">—</span>
+                    </div>
+                    <div class="listing-info-row">
+                        <span class="info-label">Доступно:</span>
+                        <span class="info-value" id="detail-amount">—</span>
+                    </div>
+                    <div class="listing-info-row">
+                        <span class="info-label">Минимум:</span>
+                        <span class="info-value" id="detail-min-amount">—</span>
+                    </div>
+                    <div class="listing-info-row">
+                        <span class="info-label">Цена за 1кк:</span>
+                        <span class="info-value" id="detail-price">—</span>
+                    </div>
+                    <div class="listing-description" id="detail-description"></div>
+                </div>
+                
+                <!-- Калькулятор покупки -->
+                <div class="purchase-calculator">
+                    <h3 class="calculator-title">Калькулятор покупки</h3>
+                    
+                    <div class="profile-field">
+                        <label>Количество (млн)</label>
+                        <input type="number" id="purchase-amount" placeholder="Введите количество" min="1" oninput="calculatePurchase()">
+                        <div class="field-hint" id="purchase-hint"></div>
+                    </div>
+                    
+                    <div class="purchase-total">
+                        <span class="total-label">К оплате:</span>
+                        <span class="total-amount" id="purchase-total">0 ₽</span>
+                    </div>
+                    
+                    <div class="purchase-buttons">
+                        <button class="purchase-btn balance-btn" onclick="purchaseWithBalance()">
+                            💰 Купить с баланса
+                        </button>
+                        <button class="purchase-btn topup-btn-alt" onclick="purchaseWithTopup()">
+                            💳 Пополнить и купить
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -546,7 +617,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v28</div>
+                    <div class="user-version">v29</div>
                 </div>
             </div>
         </div>
@@ -567,6 +638,6 @@
     
     <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
-    <script src="app.js?v=28"></script>
+    <script src="app.js?v=29"></script>
 </body>
 </html>

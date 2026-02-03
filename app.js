@@ -164,7 +164,160 @@ function calculateRating(avgRating) {
 
 // Показать детали объявления
 function showListingDetails(listing) {
-    alert(`${listing.game}\n\nКоличество: ${listing.amount}кк\nЦена: ${listing.price}₽\n\nПродавец: ${listing.seller.name}`);
+    window.currentListing = listing;
+    
+    document.getElementById('listing-detail-page').style.display = 'block';
+    document.getElementById('publications-section').style.display = 'none';
+    document.getElementById('user-profile-card').style.display = 'none';
+    
+    // Заполняем информацию о продавце
+    const avatarEl = document.getElementById('detail-seller-avatar');
+    if (listing.seller.avatar_url) {
+        avatarEl.innerHTML = `<img src="${listing.seller.avatar_url}" alt="Avatar">`;
+    } else {
+        avatarEl.innerHTML = '👤';
+    }
+    
+    document.getElementById('detail-seller-name').textContent = listing.seller.name;
+    document.getElementById('detail-seller-rating').textContent = calculateRating(listing.seller.rating || 0);
+    
+    // Заполняем информацию о лоте
+    document.getElementById('detail-server').textContent = listing.game;
+    document.getElementById('detail-amount').textContent = listing.amount + 'кк';
+    document.getElementById('detail-min-amount').textContent = (listing.min_amount || 1) + 'кк';
+    document.getElementById('detail-price').textContent = listing.price + '₽';
+    document.getElementById('detail-description').textContent = listing.description || 'Без описания';
+    
+    // Очищаем калькулятор
+    document.getElementById('purchase-amount').value = '';
+    document.getElementById('purchase-total').textContent = '0 ₽';
+    document.getElementById('purchase-hint').textContent = '';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('medium');
+    debugLog('Opened listing detail: ' + listing.id, 'info');
+}
+
+// Закрыть детали лота
+function closeListingDetail() {
+    document.getElementById('listing-detail-page').style.display = 'none';
+    document.getElementById('publications-section').style.display = 'block';
+    document.getElementById('user-profile-card').style.display = 'block';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Рассчитать стоимость покупки
+function calculatePurchase() {
+    const listing = window.currentListing;
+    if (!listing) return;
+    
+    const amount = parseInt(document.getElementById('purchase-amount').value) || 0;
+    const minAmount = listing.min_amount || 1;
+    const maxAmount = listing.amount;
+    const pricePerMil = listing.price;
+    
+    const hintEl = document.getElementById('purchase-hint');
+    const totalEl = document.getElementById('purchase-total');
+    
+    if (amount === 0) {
+        hintEl.textContent = '';
+        hintEl.className = 'field-hint';
+        totalEl.textContent = '0 ₽';
+        return;
+    }
+    
+    if (amount < minAmount) {
+        hintEl.textContent = `⚠️ Минимальная покупка: ${minAmount}кк`;
+        hintEl.className = 'field-hint error';
+        totalEl.textContent = '0 ₽';
+        return;
+    }
+    
+    if (amount > maxAmount) {
+        hintEl.textContent = `⚠️ Доступно только ${maxAmount}кк`;
+        hintEl.className = 'field-hint error';
+        totalEl.textContent = '0 ₽';
+        return;
+    }
+    
+    const total = amount * pricePerMil;
+    hintEl.textContent = `✓ ${amount}кк × ${pricePerMil}₽ = ${total}₽`;
+    hintEl.className = 'field-hint success';
+    totalEl.textContent = total + ' ₽';
+}
+
+// Купить с баланса
+function purchaseWithBalance() {
+    const listing = window.currentListing;
+    const amount = parseInt(document.getElementById('purchase-amount').value) || 0;
+    
+    if (!listing || amount === 0) {
+        if (tg) tg.showAlert('Укажите количество');
+        else alert('Укажите количество');
+        return;
+    }
+    
+    const minAmount = listing.min_amount || 1;
+    const maxAmount = listing.amount;
+    
+    if (amount < minAmount) {
+        if (tg) tg.showAlert(`Минимальная покупка: ${minAmount}кк`);
+        else alert(`Минимальная покупка: ${minAmount}кк`);
+        return;
+    }
+    
+    if (amount > maxAmount) {
+        if (tg) tg.showAlert(`Доступно только ${maxAmount}кк`);
+        else alert(`Доступно только ${maxAmount}кк`);
+        return;
+    }
+    
+    const total = amount * listing.price;
+    debugLog('Purchase with balance: amount=' + amount + ', total=' + total, 'info');
+    
+    if (tg) {
+        tg.showAlert('⚠️ Функция покупки находится в разработке');
+        tg.HapticFeedback.notificationOccurred('warning');
+    } else {
+        alert('⚠️ Функция покупки находится в разработке');
+    }
+}
+
+// Пополнить и купить
+function purchaseWithTopup() {
+    const listing = window.currentListing;
+    const amount = parseInt(document.getElementById('purchase-amount').value) || 0;
+    
+    if (!listing || amount === 0) {
+        if (tg) tg.showAlert('Укажите количество');
+        else alert('Укажите количество');
+        return;
+    }
+    
+    const minAmount = listing.min_amount || 1;
+    const maxAmount = listing.amount;
+    
+    if (amount < minAmount) {
+        if (tg) tg.showAlert(`Минимальная покупка: ${minAmount}кк`);
+        else alert(`Минимальная покупка: ${minAmount}кк`);
+        return;
+    }
+    
+    if (amount > maxAmount) {
+        if (tg) tg.showAlert(`Доступно только ${maxAmount}кк`);
+        else alert(`Доступно только ${maxAmount}кк`);
+        return;
+    }
+    
+    const total = amount * listing.price;
+    debugLog('Purchase with topup: amount=' + amount + ', total=' + total, 'info');
+    
+    if (tg) {
+        tg.showAlert('⚠️ Функция покупки находится в разработке');
+        tg.HapticFeedback.notificationOccurred('warning');
+    } else {
+        alert('⚠️ Функция покупки находится в разработке');
+    }
 }
 
 // Загрузка данных пользователя
@@ -347,6 +500,7 @@ function closeCreateListing() {
 async function publishListing() {
     const server = document.getElementById('listing-server').value;
     const amount = document.getElementById('listing-amount').value;
+    const minAmount = document.getElementById('listing-min-amount').value;
     const price = document.getElementById('listing-price').value;
     const description = document.getElementById('listing-description').value.trim();
     
@@ -360,6 +514,18 @@ async function publishListing() {
     if (!amount || amount <= 0) {
         if (tg) tg.showAlert('Укажите количество');
         else alert('Укажите количество');
+        return;
+    }
+    
+    if (!minAmount || minAmount <= 0) {
+        if (tg) tg.showAlert('Укажите минимальную продажу');
+        else alert('Укажите минимальную продажу');
+        return;
+    }
+    
+    if (parseInt(minAmount) > parseInt(amount)) {
+        if (tg) tg.showAlert('Минимальная продажа не может быть больше общего количества');
+        else alert('Минимальная продажа не может быть больше общего количества');
         return;
     }
     
@@ -383,15 +549,16 @@ async function publishListing() {
     }
     
     try {
-        debugLog('Publishing listing: server=' + server + ', amount=' + amount + ', price=' + price, 'info');
+        debugLog('Publishing listing: server=' + server + ', amount=' + amount + ', min=' + minAmount + ', price=' + price, 'info');
         
-        // Создаем объявление (без listing_type)
+        // Создаем объявление
         const { error } = await supabaseClient
             .from('rplavka_listings')
             .insert([{
                 seller_id: userId,
                 game: server,
                 amount: parseInt(amount),
+                min_amount: parseInt(minAmount),
                 price: parseInt(price),
                 description: description || `${amount}кк - ${price}₽`,
                 status: 'active'
@@ -655,3 +822,7 @@ window.openTopup = openTopup;
 window.closeTopup = closeTopup;
 window.processTopup = processTopup;
 window.selectPaymentMethod = selectPaymentMethod;
+window.closeListingDetail = closeListingDetail;
+window.calculatePurchase = calculatePurchase;
+window.purchaseWithBalance = purchaseWithBalance;
+window.purchaseWithTopup = purchaseWithTopup;
