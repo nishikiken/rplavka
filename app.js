@@ -183,36 +183,45 @@ function showListingDetails(listing) {
     
     // Заполняем информацию о лоте
     document.getElementById('detail-server').textContent = listing.game;
-    document.getElementById('detail-amount').textContent = listing.amount + 'кк';
-    document.getElementById('detail-price').textContent = listing.price + '₽';
+    document.getElementById('detail-amount').textContent = (listing.amount * 1000) + 'к виртов';
+    document.getElementById('detail-price').textContent = listing.price + '₽ за 1000к';
     
     // Очищаем калькулятор
     document.getElementById('purchase-amount').value = '';
     document.getElementById('purchase-price').value = '';
-    document.getElementById('purchase-hint').textContent = '';
-    document.getElementById('purchase-hint').className = 'purchase-hint';
+    const hintEl = document.getElementById('purchase-hint');
+    hintEl.style.display = 'none';
+    hintEl.textContent = '';
+    hintEl.className = 'purchase-hint';
     
     if (tg) tg.HapticFeedback.impactOccurred('medium');
     debugLog('Opened listing detail: ' + listing.id, 'info');
 }
 
-// Рассчитать стоимость покупки (от количества)
+// Закрыть детали лота
+function closeListingDetail() {
+    document.getElementById('listing-detail-page').style.display = 'none';
+    document.getElementById('publications-section').style.display = 'block';
+    document.getElementById('user-profile-card').style.display = 'block';
+    
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+}
+
+// Рассчитать стоимость покупки (от количества в тысячах)
 function calculatePurchaseFromAmount() {
     const listing = window.currentListing;
     if (!listing) return;
     
-    const amountKK = parseFloat(document.getElementById('purchase-amount').value) || 0;
-    const amountK = amountKK * 1000; // Переводим в тысячи
+    const amountK = parseFloat(document.getElementById('purchase-amount').value) || 0; // В тысячах
     const minAmountK = listing.min_amount || 1000; // Минимум в тысячах
     const maxAmountK = listing.amount * 1000; // Максимум в тысячах
-    const pricePerMil = listing.price;
+    const pricePerMil = listing.price; // Цена за 1000к (1кк)
     
     const hintEl = document.getElementById('purchase-hint');
     const priceInput = document.getElementById('purchase-price');
     
-    if (amountKK === 0) {
-        hintEl.textContent = '';
-        hintEl.className = 'purchase-hint';
+    if (amountK === 0) {
+        hintEl.style.display = 'none';
         priceInput.value = '';
         return;
     }
@@ -220,21 +229,22 @@ function calculatePurchaseFromAmount() {
     if (amountK < minAmountK) {
         hintEl.textContent = `⚠️ Минимум ${minAmountK}к виртов (требование продавца)`;
         hintEl.className = 'purchase-hint error';
+        hintEl.style.display = 'flex';
         priceInput.value = '';
         return;
     }
     
     if (amountK > maxAmountK) {
-        hintEl.textContent = `⚠️ Доступно только ${listing.amount}кк`;
+        hintEl.textContent = `⚠️ Доступно только ${maxAmountK}к виртов`;
         hintEl.className = 'purchase-hint error';
+        hintEl.style.display = 'flex';
         priceInput.value = '';
         return;
     }
     
-    const total = amountKK * pricePerMil;
-    hintEl.textContent = `✓ ${amountKK}кк × ${pricePerMil}₽ = ${total}₽`;
-    hintEl.className = 'purchase-hint success';
-    priceInput.value = total;
+    const total = (amountK / 1000) * pricePerMil;
+    hintEl.style.display = 'none';
+    priceInput.value = Math.round(total);
 }
 
 // Рассчитать количество (от суммы)
@@ -249,49 +259,47 @@ function calculatePurchaseFromPrice() {
     const amountInput = document.getElementById('purchase-amount');
     
     if (total === 0) {
-        hintEl.textContent = '';
-        hintEl.className = 'purchase-hint';
+        hintEl.style.display = 'none';
         amountInput.value = '';
         return;
     }
     
-    const amountKK = total / pricePerMil;
-    const amountK = amountKK * 1000;
+    const amountK = (total / pricePerMil) * 1000; // Переводим в тысячи
     const minAmountK = listing.min_amount || 1000;
     const maxAmountK = listing.amount * 1000;
     
     if (amountK < minAmountK) {
         hintEl.textContent = `⚠️ Минимум ${minAmountK}к виртов (требование продавца)`;
         hintEl.className = 'purchase-hint error';
+        hintEl.style.display = 'flex';
         amountInput.value = '';
         return;
     }
     
     if (amountK > maxAmountK) {
-        hintEl.textContent = `⚠️ Доступно только ${listing.amount}кк`;
+        hintEl.textContent = `⚠️ Доступно только ${maxAmountK}к виртов`;
         hintEl.className = 'purchase-hint error';
+        hintEl.style.display = 'flex';
         amountInput.value = '';
         return;
     }
     
-    hintEl.textContent = `✓ ${amountKK.toFixed(3)}кк × ${pricePerMil}₽ = ${total}₽`;
-    hintEl.className = 'purchase-hint success';
-    amountInput.value = amountKK.toFixed(3);
+    hintEl.style.display = 'none';
+    amountInput.value = Math.round(amountK);
 }
 
 // Купить с баланса
 function purchaseWithBalance() {
     const listing = window.currentListing;
-    const amountKK = parseFloat(document.getElementById('purchase-amount').value) || 0;
+    const amountK = parseFloat(document.getElementById('purchase-amount').value) || 0;
     const total = parseFloat(document.getElementById('purchase-price').value) || 0;
     
-    if (!listing || amountKK === 0 || total === 0) {
+    if (!listing || amountK === 0 || total === 0) {
         if (tg) tg.showAlert('Укажите количество');
         else alert('Укажите количество');
         return;
     }
     
-    const amountK = amountKK * 1000;
     const minAmountK = listing.min_amount || 1000;
     const maxAmountK = listing.amount * 1000;
     
@@ -302,12 +310,12 @@ function purchaseWithBalance() {
     }
     
     if (amountK > maxAmountK) {
-        if (tg) tg.showAlert(`Доступно только ${listing.amount}кк`);
-        else alert(`Доступно только ${listing.amount}кк`);
+        if (tg) tg.showAlert(`Доступно только ${maxAmountK}к виртов`);
+        else alert(`Доступно только ${maxAmountK}к виртов`);
         return;
     }
     
-    debugLog('Purchase with balance: amount=' + amountKK + 'kk, total=' + total, 'info');
+    debugLog('Purchase with balance: amount=' + amountK + 'k, total=' + total, 'info');
     
     if (tg) {
         tg.showAlert('⚠️ Функция покупки находится в разработке');
@@ -320,16 +328,15 @@ function purchaseWithBalance() {
 // Пополнить и купить
 function purchaseWithTopup() {
     const listing = window.currentListing;
-    const amountKK = parseFloat(document.getElementById('purchase-amount').value) || 0;
+    const amountK = parseFloat(document.getElementById('purchase-amount').value) || 0;
     const total = parseFloat(document.getElementById('purchase-price').value) || 0;
     
-    if (!listing || amountKK === 0 || total === 0) {
+    if (!listing || amountK === 0 || total === 0) {
         if (tg) tg.showAlert('Укажите количество');
         else alert('Укажите количество');
         return;
     }
     
-    const amountK = amountKK * 1000;
     const minAmountK = listing.min_amount || 1000;
     const maxAmountK = listing.amount * 1000;
     
@@ -340,12 +347,12 @@ function purchaseWithTopup() {
     }
     
     if (amountK > maxAmountK) {
-        if (tg) tg.showAlert(`Доступно только ${listing.amount}кк`);
-        else alert(`Доступно только ${listing.amount}кк`);
+        if (tg) tg.showAlert(`Доступно только ${maxAmountK}к виртов`);
+        else alert(`Доступно только ${maxAmountK}к виртов`);
         return;
     }
     
-    debugLog('Purchase with topup: amount=' + amountKK + 'kk, total=' + total, 'info');
+    debugLog('Purchase with topup: amount=' + amountK + 'k, total=' + total, 'info');
     
     if (tg) {
         tg.showAlert('⚠️ Функция покупки находится в разработке');

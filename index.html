@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=30">
+    <link rel="stylesheet" href="style.css?v=31">
 </head>
 <body>
     <div class="container">
@@ -117,7 +117,7 @@
                         <span class="info-value" id="detail-amount">—</span>
                     </div>
                     <div class="listing-info-row">
-                        <span class="info-label">Цена за 1кк:</span>
+                        <span class="info-label">Цена:</span>
                         <span class="info-value" id="detail-price">—</span>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                             <label class="purchase-label">ПОЛУЧУ</label>
                             <div class="purchase-input-wrapper">
                                 <input type="number" id="purchase-amount" placeholder="0" min="1" step="1" oninput="calculatePurchaseFromAmount()">
-                                <span class="purchase-unit">КК</span>
+                                <span class="purchase-unit">К</span>
                             </div>
                         </div>
                         
@@ -144,7 +144,7 @@
                         </div>
                     </div>
                     
-                    <div class="purchase-hint" id="purchase-hint"></div>
+                    <div class="purchase-hint" id="purchase-hint" style="display: none;"></div>
                     
                     <div class="purchase-buttons">
                         <button class="purchase-btn balance-btn" onclick="purchaseWithBalance()">
@@ -621,7 +621,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v30</div>
+                    <div class="user-version">v31</div>
                 </div>
             </div>
         </div>
@@ -642,6 +642,6 @@
     
     <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
-    <script src="app.js?v=30"></script>
+    <script src="app.js?v=31"></script>
 </body>
 </html>
