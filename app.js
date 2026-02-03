@@ -121,6 +121,7 @@ function renderListings(listings) {
         card.className = 'seller-card';
         
         const rating = calculateRating(listing.seller.rating || 0);
+        const amountK = listing.amount * 1000; // Переводим в тысячи
         
         card.innerHTML = `
             <div class="seller-info">
@@ -135,6 +136,16 @@ function renderListings(listings) {
             </div>
             <div class="seller-banner">
                 <div class="banner-placeholder">🖼️</div>
+            </div>
+            <div class="listing-quick-info">
+                <div class="quick-info-item">
+                    <span class="quick-info-label">Доступно:</span>
+                    <span class="quick-info-value">${amountK}к</span>
+                </div>
+                <div class="quick-info-item">
+                    <span class="quick-info-label">Цена:</span>
+                    <span class="quick-info-value">${listing.price}₽/кк</span>
+                </div>
             </div>
         `;
         
