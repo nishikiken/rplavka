@@ -773,50 +773,90 @@ body {
     box-shadow: 0 0 20px var(--neon-green-glow);
 }
 
-.calculator-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--neon-green);
-    text-shadow: 0 0 10px var(--neon-green-glow);
+.purchase-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 16px;
-    text-align: center;
 }
 
-.field-hint {
-    font-size: 12px;
+.purchase-field {
+    flex: 1;
+}
+
+.purchase-label {
+    font-size: 11px;
+    font-weight: 600;
     color: rgba(255, 255, 255, 0.5);
-    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: block;
 }
 
-.field-hint.error {
-    color: #ff4444;
+.purchase-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-.field-hint.success {
-    color: var(--neon-green);
-}
-
-.purchase-total {
+.purchase-input-wrapper input {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(0, 255, 136, 0.3);
     border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 16px 0;
+    padding: 14px 50px 14px 14px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    width: 100%;
 }
 
-.total-label {
+.purchase-input-wrapper input:focus {
+    outline: none;
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px var(--neon-green-glow);
+}
+
+.purchase-unit {
+    position: absolute;
+    right: 14px;
     font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
 }
 
-.total-amount {
+.purchase-separator {
     font-size: 24px;
-    font-weight: 900;
     color: var(--neon-green);
-    text-shadow: 0 0 15px var(--neon-green-glow);
+    flex-shrink: 0;
+}
+
+.purchase-hint {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    text-align: center;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.purchase-hint.error {
+    color: #ff4444;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.purchase-hint.success {
+    color: var(--neon-green);
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.3);
 }
 
 .purchase-buttons {
