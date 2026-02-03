@@ -541,8 +541,8 @@ function closeCreateListing() {
 // Опубликовать объявление
 async function publishListing() {
     const server = document.getElementById('listing-server').value;
-    const amount = document.getElementById('listing-amount').value;
-    const minAmount = document.getElementById('listing-min-amount').value;
+    const amountK = document.getElementById('listing-amount').value; // В тысячах
+    const minAmountK = document.getElementById('listing-min-amount').value; // В тысячах
     const price = document.getElementById('listing-price').value;
     const description = document.getElementById('listing-description').value.trim();
     
@@ -553,19 +553,19 @@ async function publishListing() {
         return;
     }
     
-    if (!amount || amount <= 0) {
+    if (!amountK || amountK <= 0) {
         if (tg) tg.showAlert('Укажите количество');
         else alert('Укажите количество');
         return;
     }
     
-    if (!minAmount || minAmount <= 0) {
+    if (!minAmountK || minAmountK <= 0) {
         if (tg) tg.showAlert('Укажите минимальную продажу');
         else alert('Укажите минимальную продажу');
         return;
     }
     
-    if (parseInt(minAmount) > parseInt(amount)) {
+    if (parseInt(minAmountK) > parseInt(amountK)) {
         if (tg) tg.showAlert('Минимальная продажа не может быть больше общего количества');
         else alert('Минимальная продажа не может быть больше общего количества');
         return;
@@ -591,18 +591,20 @@ async function publishListing() {
     }
     
     try {
-        debugLog('Publishing listing: server=' + server + ', amount=' + amount + ', min=' + minAmount + ', price=' + price, 'info');
+        debugLog('Publishing listing: server=' + server + ', amount=' + amountK + 'k, min=' + minAmountK + 'k, price=' + price, 'info');
         
-        // Создаем объявление
+        // Сохраняем в БД (amount в кк для обратной совместимости, min_amount в тысячах)
+        const amountKK = parseInt(amountK) / 1000; // Переводим в кк для БД
+        
         const { error } = await supabaseClient
             .from('rplavka_listings')
             .insert([{
                 seller_id: userId,
                 game: server,
-                amount: parseInt(amount),
-                min_amount: parseInt(minAmount),
+                amount: amountKK, // В кк
+                min_amount: parseInt(minAmountK), // В тысячах
                 price: parseInt(price),
-                description: description || `${amount}кк - ${price}₽`,
+                description: description || `${amountK}к - ${price}₽`,
                 status: 'active'
             }]);
         

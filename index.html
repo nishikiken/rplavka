@@ -6,7 +6,7 @@
     <title>RP LAVKA</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css?v=31">
+    <link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
     <div class="container">
@@ -64,19 +64,21 @@
                     </div>
                     
                     <div class="profile-field">
-                        <label>Количество (млн)</label>
-                        <input type="number" id="listing-amount" placeholder="Например: 10" min="1">
+                        <label>Количество (тысяч)</label>
+                        <input type="number" id="listing-amount" placeholder="Например: 10000" min="1">
+                        <div class="field-hint">Общее количество виртов в тысячах (10000 = 10кк)</div>
                     </div>
                     
                     <div class="profile-field">
                         <label>Минимальная продажа (тысяч)</label>
                         <input type="number" id="listing-min-amount" placeholder="Например: 500" min="1" step="1">
-                        <div class="field-hint">Минимальное количество для покупки (в тысячах)</div>
+                        <div class="field-hint">Минимальное количество для покупки (500 = 500к)</div>
                     </div>
                     
                     <div class="profile-field">
-                        <label>Цена за 1кк (₽)</label>
+                        <label>Цена за 1000к (₽)</label>
                         <input type="number" id="listing-price" placeholder="Например: 700" min="1">
+                        <div class="field-hint">Цена за 1000 тысяч виртов (1кк)</div>
                     </div>
                     
                     <div class="profile-field">
@@ -621,7 +623,7 @@
                     <div class="user-avatar" id="user-avatar">
                         <div class="avatar-placeholder">👤</div>
                     </div>
-                    <div class="user-version">v31</div>
+                    <div class="user-version">v32</div>
                 </div>
             </div>
         </div>
@@ -642,6 +644,6 @@
     
     <button class="debug-toggle-btn" onclick="toggleDebugConsole()">🐛</button>
 
-    <script src="app.js?v=31"></script>
+    <script src="app.js?v=32"></script>
 </body>
 </html>
