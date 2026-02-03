@@ -134,7 +134,7 @@ function renderListings(listings) {
                 </div>
             </div>
             <div class="seller-banner">
-                <div class="banner-text">${listing.amount}кк - ${listing.price}₽</div>
+                <div class="banner-placeholder">🖼️</div>
             </div>
         `;
         

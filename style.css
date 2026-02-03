@@ -236,12 +236,10 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.banner-text {
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    text-align: center;
-    line-height: 1.4;
+.banner-placeholder {
+    font-size: 48px;
+    opacity: 0.3;
+    filter: grayscale(100%);
 }
 
 /* Glassmorphism плашка пользователя */
